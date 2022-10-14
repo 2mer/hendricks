@@ -1,0 +1,5 @@
+/target
+out_dir/
+logs/
+Rocket.toml
+.env

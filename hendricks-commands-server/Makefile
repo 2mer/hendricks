@@ -1,0 +1,2 @@
+run:
+	RUST_BACKTRACE=1 ROCKET_CLI_COLORS=false cargo run
