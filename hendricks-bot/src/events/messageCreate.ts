@@ -1,5 +1,6 @@
 import { Client, Message } from "discord.js";
-import run from "../codeRunner";
+import { run, extractCode } from "../codeRunner";
+import { runEmoji } from "../constants";
 import { ClientExtras } from "../extra";
 import Event from "./event";
 
@@ -11,41 +12,29 @@ export default {
 		const user = message.author;
 		const channel = message.channel;
 		const content = message.content;
+		const guildId = message.guildId;
+
+		if (guildId == null) {
+			message.reply('guildId is null. Aborting.');
+			return;
+		}
 
 		if (client.user == null) {
-			message.reply('client.userId is null. Aborting.');
+			message.reply('client.user is null. Aborting.');
 			return;
 		}
 
+		// ignore self messages
 		if (user.id == client.user.id) {
-			return
-		}
-
-		const lines = content.split(/\n\r?/);
-		if (lines.length < 2) {
 			return;
 		}
 
-		const firstLine = lines[0];
-		const lastLine = lines[lines.length - 1];
-		if (!firstLine.startsWith('```') || lastLine != '```') {
+		// extract the code from the message
+		const extracted = extractCode(message.content);
+		if (extracted == null) {
 			return;
 		}
 
-		let language = firstLine.substring(3);
-		if (language != 'js') {
-			return;
-		}
-
-		const codeLines = lines.slice(1, lines.length - 1);
-		const code = codeLines.join('\n');
-
-		await channel.send(`<@${user.id}> Running!`);
-
-		try {
-			run(message.guildId!, channel, user.id, code);
-		} catch (_e: any) {
-			message.reply('there was an error running your code');
-		}
+		await message.react(runEmoji);
 	},
 } as Event;

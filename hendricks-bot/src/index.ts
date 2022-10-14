@@ -2,8 +2,8 @@ import { AudioPlayer } from '@discordjs/voice';
 import { Client } from 'discord.js';
 import { ClientExtras } from './extra';
 
-const { GatewayIntentBits, ClientUser } = require('discord.js');
-const { createAudioPlayer } = require('@discordjs/voice');
+import { GatewayIntentBits, ClientUser } from 'discord.js';
+import { createAudioPlayer } from '@discordjs/voice';
 
 import events from './events/events';
 
@@ -16,7 +16,15 @@ require('dotenv').config()
 const token = process.env['TOKEN'];
 
 // create the client and its associated variables
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const client = new Client({
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildPresences,
+		GatewayIntentBits.GuildMessageReactions,
+	]
+});
 const clientExtras: ClientExtras = {
 	player: undefined,
 	queue: []

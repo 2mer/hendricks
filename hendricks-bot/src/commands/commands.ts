@@ -1,10 +1,10 @@
 import imagine from './imagine';
 import play from './play';
 import Command from './command';
-import run from './run';
+import eval from './eval';
 
 export default [
 	imagine,
 	play,
-	run
+	eval
 ] as Command[];
