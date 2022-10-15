@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, Client, ClientEvents, Interaction, SlashCommandStringOption } from "discord.js";
+import { SlashCommandBuilder, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Client, ClientEvents, Interaction, SlashCommandStringOption } from "discord.js";
+import { buttonDelete, emojiNumbers } from "../constants";
 import { ClientExtras } from "../extra";
 import { boolOption, intOption, stringOption } from "./utils";
+import tasks from '../tasks';
+import { imageRequestAndView } from "./commons";
 
-const { SlashCommandBuilder, AttachmentBuilder, Options } = require('discord.js');
-const fs = require('fs')
 const { default: axios } = require('axios');
-const EventSource = require('eventsource')
 
 const slash = new SlashCommandBuilder()
 	.setName('imagine')
@@ -31,10 +31,16 @@ async function execute<K extends keyof ClientEvents>(clientExtras: ClientExtras,
 	// const client = interaction.client;
 	const channel = interaction.channel;
 	const user = interaction.user;
+	const guildId = interaction.guildId;
 
 	// check that there is a text channel
 	if (!channel) {
 		await interaction.reply(`Interaction.channel is null. This shouldn't have happened.`);
+		return;
+	}
+
+	if (!guildId) {
+		await interaction.reply(`Interaction.guildId is null. This shouldn't have happened.`);
 		return;
 	}
 
@@ -80,41 +86,14 @@ async function execute<K extends keyof ClientEvents>(clientExtras: ClientExtras,
 		const [id, number_in_queue] = res.split(' ');
 		console.log(`initial response: id=${id}, number in queue=${number_in_queue}`);
 
+		// add the id to the tasks collection
+		tasks.add({ guildId, id, prompt, task: `imagine: ${prompt}`, author: user.username });
+
 		// notify the discord server that the prompt has been accepted
 		await interaction.reply(`# in queue: ${number_in_queue}, prompt accepted: \`${prompt}\``);
 
 		// wait for the server to reply with a ready message
-		const es = new EventSource(`http://${addr}/events/${id}`);
-		es.onmessage = async (e: any) => {
-			// an event has been received - the image is ready
-			if (e.data == 'complete') {
-				es.close();
-
-				// request the image
-				await channel.send(`<@${user.id}> Your dish is ready! It will be served shortly!`);
-
-				console.log(`requesting: ${id}`)
-				const req = {
-					method: 'get',
-					url: `http://${addr}/image/${id}`,
-					responseType: 'stream',
-				};
-
-				axios(req).then(async (response: any) => {
-					const data = response.data;
-					const attachment = new AttachmentBuilder(data, { name: 'generated.png' });
-					await channel.send({ content: `Here sir, your \`${prompt}\``, files: [attachment] });
-				}).catch(async (err: any) => {
-					await channel.send('error');
-				})
-			}
-		}
-
-		// event error
-		es.onerror = async (err: any) => {
-			await channel.send(`There was an error during image generation`);
-			es.close();
-		}
+		await imageRequestAndView(addr, id, user, channel, prompt, 6, 3);
 	} catch (err) {
 		console.log('error!');
 		console.error(err);

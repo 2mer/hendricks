@@ -39,7 +39,7 @@ fn default_seed() -> Option<u32> {
 }
 
 fn default_skip_save() -> bool {
-	true
+	false
 }
 
 #[derive(Debug, Deserialize)]
@@ -88,7 +88,7 @@ impl Generation {
 
 		// prompt
 		command.arg("--prompt");
-		command.arg(format!("{}", self.prompt));
+		command.arg(format!("\"{}\"", self.prompt));
 
 		// ddim_steps
 		if let Some(n) = self.ddim_steps {
@@ -134,10 +134,14 @@ impl Generation {
 		}
 
 		// seed
-		let seed = self.seed.unwrap_or_else(|| rand::random());
-		if self.plms {
+		if let Some(seed) = self.seed {
 			command.arg("--seed");
 			command.arg(seed.to_string());
+		}
+
+		// plms
+		if self.plms {
+			command.arg("--plms");
 		}
 
 		return command;

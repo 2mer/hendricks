@@ -1,4 +1,9 @@
 use dotenv::dotenv;
+use hendricks_commands_server::{
+	requests::{generation::Generation, regeneration::Regeneration},
+	utils::pick_log_file,
+	worker::{self, get_image_path, listen, start_worker_thread, TaskStatus},
+};
 use rocket::{
 	fs::NamedFile,
 	response::status::NotFound,
@@ -6,14 +11,9 @@ use rocket::{
 	serde::json::Json,
 	{get, launch, post, routes},
 };
-use hendricks_commands_server::{
-	requests::generation::Generation,
-	utils::pick_log_file,
-	worker::{self, get_image_path, listen, start_worker_thread, TaskStatus},
-};
 use simplelog::WriteLogger;
 
-/// A POST route for submitting a request.
+/// A POST route for submitting an image generation request.
 /// The input is a json serialized [task::Generation] object and the output is the
 /// id of the request.
 #[post("/gen", data = "<req>")]
@@ -23,6 +23,20 @@ async fn gen(req: Json<Generation>) -> String {
 	let (id, number_in_queue) = worker::request(req.0);
 
 	log::info!("/gen: id={id}, number_in_queue={number_in_queue}");
+
+	format!("{} {}", id, number_in_queue)
+}
+
+/// A POST route for submitting an image regeneration request.
+/// The input is a json serialized [task::Regeneration] object and the output is
+/// the id of the request.
+#[post("/regen", data = "<req>")]
+async fn regen(req: Json<Regeneration>) -> String {
+	log::info!("/regen: prompt={}", req.prompt);
+
+	let (id, number_in_queue) = worker::request(req.0);
+
+	log::info!("/regen: id={id}, number_in_queue={number_in_queue}");
 
 	format!("{} {}", id, number_in_queue)
 }
@@ -37,11 +51,11 @@ async fn events(id: i32) -> EventStream![] {
 
 	let status = if let Some(mut rx) = listen(id) {
 		match rx.recv().await.unwrap() {
-			TaskStatus::Pending => "pending",
-			TaskStatus::Complete => "complete",
+			TaskStatus::Pending => "pending".to_string(),
+			TaskStatus::Complete { seconds } => format!("complete {seconds}"),
 		}
 	} else {
-		"id not found"
+		"id not found".to_string()
 	};
 
 	log::info!("/events: id={id}, status={status}");
@@ -64,6 +78,12 @@ async fn image(id: i32) -> Result<NamedFile, NotFound<String>> {
 		.map_err(|e| NotFound(e.to_string()))
 }
 
+/// A GET route for all the queued task ids.
+#[get("/queued")]
+async fn queued() -> Json<Vec<i32>> {
+	worker::queued().into()
+}
+
 #[launch]
 fn rocket() -> _ {
 	// load environment
@@ -71,7 +91,7 @@ fn rocket() -> _ {
 
 	// set up logging
 	WriteLogger::init(
-		log::LevelFilter::Info,
+		log::LevelFilter::Debug,
 		simplelog::Config::default(),
 		std::fs::File::create(pick_log_file()).unwrap(),
 	)
@@ -80,5 +100,5 @@ fn rocket() -> _ {
 	let _handle = start_worker_thread();
 
 	// run the server
-	rocket::build().mount("/", routes![gen, image, events])
+	rocket::build().mount("/", routes![gen, image, events, queued, regen])
 }

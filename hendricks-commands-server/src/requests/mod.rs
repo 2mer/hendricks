@@ -1,11 +1,22 @@
 pub mod generation;
+pub mod regeneration;
+
+use generation::Generation;
+use regeneration::Regeneration;
 
 pub enum Request {
-	Generation(generation::Generation),
+	Gen(Generation),
+	Re(Regeneration),
 }
 
-impl From<generation::Generation> for Request {
-	fn from(generation: generation::Generation) -> Self {
-		Self::Generation(generation)
+impl From<Generation> for Request {
+	fn from(g: Generation) -> Self {
+		Self::Gen(g)
+	}
+}
+
+impl From<Regeneration> for Request {
+	fn from(r: Regeneration) -> Self {
+		Self::Re(r)
 	}
 }

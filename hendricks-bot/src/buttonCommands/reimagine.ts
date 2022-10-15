@@ -1,0 +1,72 @@
+import { ButtonInteraction } from "discord.js";
+import { imageRequestAndView } from "../commands/commons";
+import tasks from "../tasks";
+const { default: axios } = require('axios');
+
+export default async function reimagine(interaction: ButtonInteraction, label: string, buttonId: string) {
+	const imageNumber = parseInt(label.substring(1));
+	const id = buttonId.split('-')[1];
+
+	// load env
+	const serverIp = process.env['SERVER_IP'];
+	const serverPort = process.env['SERVER_PORT'];
+	const addr = `${serverIp}:${serverPort}`;
+
+	// const client = interaction.client;
+	const channel = interaction.channel;
+	const user = interaction.user;
+	const guildId = interaction.guildId;
+
+	// check that there is a text channel
+	if (!channel) {
+		await interaction.reply(`Interaction.channel is null. This shouldn't have happened.`);
+		return;
+	}
+
+	if (!guildId) {
+		await interaction.reply(`Interaction.guildId is null. This shouldn't have happened.`);
+		return;
+	}
+
+	const task = tasks.get(guildId, id);
+	if (!task) {
+		await interaction.reply(`No task found for this combination of guildId and id. This is probably a bug.`);
+		return;
+	}
+
+	const prompt = task.prompt;
+
+	// create the request object
+	let req: any = {
+		prompt,
+		from_id: parseInt(id),
+		image_number: imageNumber,
+		strength: 0.8,
+	};
+
+	// remove the null keys
+	for (const key in req)
+		if (req[key] === null || req[key] === undefined)
+			delete req[key];
+
+	try {
+		// send the request to the AI server
+		console.log(`sending regeneration`);
+		const { data: res } = await axios.post(`http://${addr}/regen/`, req);
+		const [id, number_in_queue] = res.split(' ');
+		console.log(`initial response: id=${id}, number in queue=${number_in_queue}`);
+
+		// add the id to the tasks collection
+		tasks.add({ guildId, id, prompt, task: `re-imagine: ${prompt}`, author: user.username });
+
+		// notify the discord server that the prompt has been accepted
+		await interaction.reply(`# in queue: ${number_in_queue}, prompt accepted: \`${prompt}\``);
+
+		// wait for the server to reply with a ready message
+		await imageRequestAndView(addr, id, user, channel, task.task, 2, 2);
+	} catch (err) {
+		console.log('error!');
+		console.error(err);
+		await channel.send('unknown error');
+	}
+}

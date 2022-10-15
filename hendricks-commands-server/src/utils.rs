@@ -7,9 +7,13 @@ use rocket::serde::{Deserialize, Deserializer};
 
 /// Returns (files, directories) in a given directory.
 pub fn list_dir_items<P: AsRef<std::path::Path>>(dir: P) -> (HashSet<String>, HashSet<String>) {
+	let path = dir.as_ref();
+
+	log::debug!("list_dir_items: {}", path.to_str().unwrap());
+
 	let mut files = HashSet::new();
 	let mut dirs = HashSet::new();
-	for f in std::fs::read_dir(dir).unwrap() {
+	for f in std::fs::read_dir(path).unwrap() {
 		let f = f.unwrap();
 		let name = f.file_name().to_str().unwrap().to_owned();
 

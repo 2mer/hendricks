@@ -5,6 +5,7 @@ use std::{
 	process::Command,
 	sync::{mpsc, Mutex},
 	thread::{spawn, JoinHandle},
+	time::Instant,
 };
 
 use rocket::tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
@@ -21,10 +22,10 @@ lazy_static! {
 	};
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum TaskStatus {
 	Pending,
-	Complete,
+	Complete { seconds: f32 },
 }
 
 struct Task {
@@ -72,7 +73,7 @@ fn worker_loop() {
 			// generate the command
 			let id = *worker.queue.back().unwrap();
 			let req = &worker.id_to_task[&id].req;
-			let (dir_name, command) = generate_command(req);
+			let (dir_name, command) = generate_command(req, &worker.id_to_task);
 
 			// add the output directory to the tasks's outputs
 			worker
@@ -85,8 +86,21 @@ fn worker_loop() {
 			(id, command)
 		};
 
+		log::debug!(
+			"running command: {} {}",
+			command.get_program().to_str().unwrap(),
+			command
+				.get_args()
+				.map(|a| a.to_str().unwrap())
+				.collect::<Vec<_>>()
+				.join(" ")
+		);
+
 		// run the command
+		let start = Instant::now();
 		command.status().unwrap();
+		let end = Instant::now();
+		let seconds = (end - start).as_secs_f32();
 
 		// mark the task as complete
 		{
@@ -94,11 +108,11 @@ fn worker_loop() {
 
 			if let Some(task) = worker.id_to_task.get_mut(&id) {
 				// mark the task as complete
-				task.status = TaskStatus::Complete;
+				task.status = TaskStatus::Complete { seconds };
 
 				// send all signals
 				for tx in &mut task.listeners {
-					tx.send(TaskStatus::Complete).unwrap();
+					tx.send(task.status).unwrap();
 				}
 			}
 
@@ -157,9 +171,9 @@ pub fn listen(id: i32) -> Option<UnboundedReceiver<TaskStatus>> {
 		// if the task is already complete, send a complete signal
 		// else, add a listener to the task and let the task send its complete signal
 		// when its ready
-		if task.status == TaskStatus::Complete {
+		if let TaskStatus::Complete { .. } = task.status {
 			log::debug!("worker: listen: complete, id={}", task.id);
-			tx.send(TaskStatus::Complete).unwrap();
+			tx.send(task.status).unwrap();
 		} else {
 			log::debug!("worker: listen: sent receiver, id={}", task.id);
 			task.listeners.push(tx);
@@ -196,8 +210,13 @@ pub fn get_image_path(id: i32) -> PathBuf {
 	dir.join(&file)
 }
 
+pub fn queued() -> Vec<i32> {
+	let worker = WORKER.lock().unwrap();
+	worker.queue.iter().cloned().collect()
+}
+
 /// Returns the directory of the command's output and the command itself.
-fn generate_command(req: &Request) -> (String, Command) {
+fn generate_command(req: &Request, id_to_task: &HashMap<i32, Task>) -> (String, Command) {
 	// load env
 	lazy_static! {
 		static ref OUT_DIR: String = env::var("OUT_DIR").unwrap();
@@ -220,8 +239,14 @@ fn generate_command(req: &Request) -> (String, Command) {
 	std::fs::create_dir_all(&target_dir).unwrap();
 
 	let command = match &req {
-		Request::Generation(gen) => {
-			gen.generate_command(SD_DIR.as_str(), target_dir.to_str().unwrap())
+		Request::Gen(gen) => gen.generate_command(SD_DIR.as_str(), target_dir.to_str().unwrap()),
+		Request::Re(re) => {
+			let source_dir = id_to_task.get(&re.from_id).unwrap().outputs[0].as_str();
+			let source_dir = Path::new(OUT_DIR.as_str())
+				.join(&source_dir)
+				.join("samples");
+
+			re.generate_command(SD_DIR.as_str(), &source_dir, target_dir.to_str().unwrap())
 		}
 	};
 
