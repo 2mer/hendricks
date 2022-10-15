@@ -31,7 +31,9 @@ impl Regeneration {
 
 		// get the image to regenerate
 		let (files, _) = list_dir_items(&source_dir);
-		let image = files.iter().nth(self.image_number).unwrap().as_str();
+		let mut files = files.into_iter().collect::<Vec<_>>();
+		files.sort();
+		let image = files.into_iter().nth(self.image_number).unwrap();
 		let source_image = source_dir.join(image);
 
 		// base command and location
