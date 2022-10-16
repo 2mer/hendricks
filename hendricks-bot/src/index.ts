@@ -12,7 +12,7 @@ const { generateDependencyReport } = require('@discordjs/voice');
 console.log(generateDependencyReport());
 
 // load env
-require('dotenv').config()
+require('dotenv').config();
 const token = process.env['TOKEN'];
 
 // create the client and its associated variables
@@ -23,20 +23,20 @@ const client = new Client({
 		GatewayIntentBits.MessageContent,
 		GatewayIntentBits.GuildPresences,
 		GatewayIntentBits.GuildMessageReactions,
-	]
+		GatewayIntentBits.GuildVoiceStates,
+	],
 });
 const clientExtras: ClientExtras = {
 	player: undefined,
-	queue: []
+	queue: [],
 };
 
 // load events
-events.forEach(event => {
-	const f = async (...args: any[]) => await event.execute(clientExtras, client, ...args);
-	if (event.once)
-		client.once(event.name, f);
-	else
-		client.on(event.name, f);
+events.forEach((event) => {
+	const f = async (...args: any[]) =>
+		await event.execute(clientExtras, client, ...args);
+	if (event.once) client.once(event.name, f);
+	else client.on(event.name, f);
 });
 
 // start the client
