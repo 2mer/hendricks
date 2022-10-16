@@ -1,4 +1,5 @@
-import { Client, Interaction } from "discord.js";
+import { BaseInteraction, Client, Interaction, ModalSubmitInteraction } from "discord.js";
+import advancedSelectionModal from "../buttonCommands/advancedSelectionModal";
 import reimagine from "../buttonCommands/reimagine";
 import commands from "../commands/commands";
 import { ClientExtras } from "../extra";
@@ -8,7 +9,7 @@ export default {
 	name: 'interactionCreate',
 	once: false,
 	async execute(extras: ClientExtras, client: Client, ...args: any[]) {
-		const interaction = args[0] as Interaction;
+		const interaction = args[0] as BaseInteraction;
 
 		if (interaction.isChatInputCommand()) {
 			const command = commands.find(command => command.slash.name == interaction.commandName);
@@ -23,10 +24,42 @@ export default {
 			}
 		}
 
+		if (interaction.isModalSubmit()) {
+			const modalInteraction = interaction as ModalSubmitInteraction;
+			const modalId = modalInteraction.customId;
+			if (modalId.startsWith('V+')) {
+				const id = modalId.split('-')[1];
+				const fields = modalInteraction.fields;
+				const prompt = fields.getTextInputValue('prompt');
+
+				console.log(`modal interaction: ${id} ${prompt}`);
+
+				let imageNumber;
+				try {
+					imageNumber = parseFloat(fields.getTextInputValue('imageNumber'));
+				} catch (e) {
+					await interaction.reply(`${e}`);
+					return;
+				}
+
+				let strength;
+				try {
+					strength = parseFloat(fields.getTextInputValue('strength'));
+				} catch (e) {
+					await interaction.reply(`${e}`);
+					return;
+				}
+
+				await reimagine(interaction, imageNumber, id, prompt.length == 0 ? undefined : prompt, strength);
+				return;
+			}
+		}
+
 		if (interaction.isButton()) {
 			const message = interaction.message;
 			const label = interaction.component.label;
 			const buttonId = interaction.customId;
+			console.log(`button interaction: label=${label}, buttonId=${buttonId}`);
 
 			if (!client.user) {
 				await interaction.reply(`client.user is undefined. This is a bug.`);
@@ -46,8 +79,20 @@ export default {
 				return;
 			}
 
+			if (label.startsWith('V+')) {
+				const id = buttonId.split('-')[1];
+				console.log(`button interaction: label=${label}, id=${id}`);
+
+				const modal = advancedSelectionModal(id);
+				await interaction.showModal(modal);
+				return;
+			}
+
 			if (label.match(/V\d/)) {
-				await reimagine(interaction, label, buttonId);
+				const imageNumber = parseInt(label.substring(1));
+				const id = buttonId.split('-')[1];
+				console.log(`button interaction: label=${label}, id=${id}, imageNumber=${imageNumber}`);
+				await reimagine(interaction, imageNumber, id, undefined, undefined);
 				return;
 			}
 

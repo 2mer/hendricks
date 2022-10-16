@@ -1,12 +1,15 @@
-import { ButtonInteraction } from "discord.js";
+import { ActionRowBuilder, ButtonInteraction, ModalBuilder, ModalSubmitInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
 import { imageRequestAndView } from "../commands/commons";
 import tasks from "../tasks";
 const { default: axios } = require('axios');
 
-export default async function reimagine(interaction: ButtonInteraction, label: string, buttonId: string) {
-	const imageNumber = parseInt(label.substring(1));
-	const id = buttonId.split('-')[1];
-
+export default async function reimagine(
+	interaction: ButtonInteraction | ModalSubmitInteraction,
+	imageNumber: number,
+	id: string,
+	prompt: string | undefined,
+	strength: string | number | undefined,
+) {
 	// load env
 	const serverIp = process.env['SERVER_IP'];
 	const serverPort = process.env['SERVER_PORT'];
@@ -34,15 +37,19 @@ export default async function reimagine(interaction: ButtonInteraction, label: s
 		return;
 	}
 
-	const prompt = task.prompt;
-
 	// create the request object
 	let req: any = {
-		prompt,
+		prompt: task.prompt || prompt,
 		from_id: parseInt(id),
 		image_number: imageNumber,
 		strength: 0.8,
 	};
+	if (strength) {
+		if (typeof strength === 'string')
+			req.strength = parseInt(strength);
+		if (typeof strength === 'number')
+			req.strength = strength;
+	}
 
 	// remove the null keys
 	for (const key in req)
@@ -57,10 +64,10 @@ export default async function reimagine(interaction: ButtonInteraction, label: s
 		console.log(`initial response: id=${id}, number in queue=${number_in_queue}`);
 
 		// add the id to the tasks collection
-		tasks.add({ guildId, id, prompt, task: `re-imagine: ${prompt}`, author: user.username });
+		tasks.add({ guildId, id, prompt: prompt || task.prompt, task: `re-imagine: ${req.prompt}`, author: user.username });
 
 		// notify the discord server that the prompt has been accepted
-		await interaction.reply(`# in queue: ${number_in_queue}, prompt accepted: \`${prompt}\``);
+		await interaction.reply(`# in queue: ${number_in_queue}, prompt accepted: \`${req.prompt}\``);
 
 		// wait for the server to reply with a ready message
 		await imageRequestAndView(addr, id, user, channel, task.task, 2, 2);

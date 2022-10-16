@@ -4,7 +4,6 @@ import { buttonDelete } from "../constants";
 const { default: axios } = require('axios');
 const EventSource = require('eventsource')
 
-
 export function imageRequestAndView(addr: string, id: string, user: User, channel: TextBasedChannel, prompt: string, numOutImages: number, imagesPerRow: number) {
 	const es = new EventSource(`http://${addr}/events/${id}`);
 	es.onmessage = async (e: any) => {
@@ -71,7 +70,11 @@ export function imageRequestAndView(addr: string, id: string, user: User, channe
 							new ButtonBuilder()
 								.setCustomId(buttonDelete)
 								.setLabel(buttonDelete)
-								.setStyle(ButtonStyle.Danger)
+								.setStyle(ButtonStyle.Danger),
+							new ButtonBuilder()
+								.setCustomId(`V+-${id}`)
+								.setLabel(`V+`)
+								.setStyle(ButtonStyle.Primary)
 						),
 				);
 
@@ -87,7 +90,7 @@ export function imageRequestAndView(addr: string, id: string, user: User, channe
 				console.log('axios error');
 				console.log(err);
 				await channel.send('axios error');
-			})
+			});
 		}
 	}
 
