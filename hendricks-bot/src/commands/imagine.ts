@@ -7,7 +7,6 @@ import {
 import { boolOption, intOption, stringOption } from './utils';
 import tasks from '../tasks';
 import { imageRequestAndView } from './commons';
-import Scope from '../types/Scope';
 import axios from 'axios';
 
 const slash = new SlashCommandBuilder()
@@ -32,7 +31,6 @@ const slash = new SlashCommandBuilder()
 	);
 
 async function execute<K extends keyof ClientEvents>(
-	scope: Scope,
 	client: Client,
 	...args: ClientEvents[K]
 ) {

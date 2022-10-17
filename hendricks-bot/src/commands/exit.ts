@@ -4,14 +4,12 @@ import {
 	Client,
 	ClientEvents,
 } from 'discord.js';
-import Scope from '../types/Scope';
 
 const slash = new SlashCommandBuilder()
 	.setName('exit')
 	.setDescription('exists Hendricks');
 
 async function execute<K extends keyof ClientEvents>(
-	scope: Scope,
 	client: Client,
 	...args: ClientEvents[K]
 ) {

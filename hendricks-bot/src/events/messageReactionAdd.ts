@@ -1,13 +1,12 @@
 import { Client, MessageReaction, User } from 'discord.js';
 import { runFromReaction } from '../codeRunner';
 import { errorEmoji, runEmoji } from '../constants';
-import Scope from '../types/Scope';
 import Event from '../types/Event';
 
 export default {
 	name: 'messageReactionAdd',
 	once: false,
-	async execute(scope: Scope, client: Client, ...args: any[]) {
+	async execute(client: Client, ...args: any[]) {
 		console.log('message reaction add');
 
 		const messageReaction = args[0] as MessageReaction;
@@ -26,7 +25,7 @@ export default {
 		}
 
 		if (emoji == runEmoji) {
-			const { error } = await runFromReaction(
+			const ret = await runFromReaction(
 				client,
 				message.guildId!,
 				channel,
@@ -35,11 +34,14 @@ export default {
 				message.content!,
 				message
 			);
-			if (error) {
-				await message.reply(
-					errorEmoji + ' Run error: ```' + error + '```'
-				);
-				return;
+			if (ret) {
+				const error = ret.error;
+				if (error) {
+					await message.reply(
+						errorEmoji + ' Run error: ```' + error + '```'
+					);
+					return;
+				}
 			}
 		}
 	},

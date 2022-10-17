@@ -86,7 +86,7 @@ export function runFromReaction(
 	userId: string,
 	content: string,
 	message: OptionalMessage
-): any {
+) {
 	// extract the code and the language
 	const extracted = extractCode(content);
 	if (extracted == null) return;

@@ -7,6 +7,7 @@ import {
 	TextBasedChannel,
 	User,
 } from 'discord.js';
+import EventSource from 'eventsource';
 import { buttonDelete } from '../constants';
 
 export function imageRequestAndView(

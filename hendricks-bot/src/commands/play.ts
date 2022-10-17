@@ -14,7 +14,6 @@ import {
 	GuildMember,
 	SlashCommandBuilder,
 } from 'discord.js';
-import Scope from '../types/Scope';
 import Command from '../types/Command';
 
 const slash = new SlashCommandBuilder()
@@ -22,7 +21,6 @@ const slash = new SlashCommandBuilder()
 	.setDescription('Plays a song the specified file');
 
 async function execute<K extends keyof ClientEvents>(
-	extras: Scope,
 	client: Client,
 	...args: ClientEvents[K]
 ) {
@@ -79,8 +77,7 @@ async function execute<K extends keyof ClientEvents>(
 
 	player.on('error', (error) => {
 		console.error(
-			`Error: ${error.message} with resource ${
-				(error as any).resource.metadata.title
+			`Error: ${error.message} with resource ${(error as any).resource.metadata.title
 			}`
 		);
 	});

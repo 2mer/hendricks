@@ -4,7 +4,6 @@ import {
 	ClientEvents,
 	SlashCommandBuilder,
 } from 'discord.js';
-import Scope from '../types/Scope';
 import tasks from '../tasks';
 import Command from '../types/Command';
 import axios from 'axios';
@@ -14,7 +13,6 @@ const slash = new SlashCommandBuilder()
 	.setDescription('Displays all the queued prompts and their authors');
 
 async function execute<K extends keyof ClientEvents>(
-	extras: Scope,
 	client: Client,
 	...args: ClientEvents[K]
 ) {
@@ -53,13 +51,13 @@ async function execute<K extends keyof ClientEvents>(
 		queued.length == 0
 			? 'no tasks queued!'
 			: queued
-					.map((id: number) => tasks.get(guildId, `${id}`))
-					.map((task) =>
-						task
-							? `${task.author} -> ${task.task}`
-							: `task from a different guild`
-					)
-					.join('\n');
+				.map((id: number) => tasks.get(guildId, `${id}`))
+				.map((task) =>
+					task
+						? `${task.author} -> ${task.task}`
+						: `task from a different guild`
+				)
+				.join('\n');
 
 	await interaction.reply(`<@${user.id}>` + '```' + message + '```');
 	// await channel.send();

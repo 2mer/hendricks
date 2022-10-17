@@ -2,13 +2,12 @@ import { BaseInteraction, Client, ModalSubmitInteraction } from 'discord.js';
 import advancedSelectionModal from '../buttonCommands/advancedSelectionModal';
 import reimagine from '../buttonCommands/reimagine';
 import commands from '../commands';
-import Scope from '../types/Scope';
 import Event from '../types/Event';
 
 export default {
 	name: 'interactionCreate',
 	once: false,
-	async execute(scope: Scope, client: Client, ...args: any[]) {
+	async execute(client: Client, ...args: any[]) {
 		const interaction = args[0] as BaseInteraction;
 
 		if (interaction.isChatInputCommand()) {
@@ -19,7 +18,7 @@ export default {
 			if (!command) return;
 
 			try {
-				await command.execute(scope, client, ...args);
+				await command.execute(client, ...args);
 			} catch (error) {
 				console.error(error);
 				await interaction.reply({
