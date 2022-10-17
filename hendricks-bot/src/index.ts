@@ -26,8 +26,7 @@ const client = new Client({
 
 // load events
 events.forEach((event) => {
-	const f = async (...args: any[]) =>
-		await event.execute(client, ...args);
+	const f = async (...args: any[]) => await event.execute(client, ...args);
 	if (event.once) client.once(event.name, f);
 	else client.on(event.name, f);
 });
