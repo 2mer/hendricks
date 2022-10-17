@@ -20,6 +20,6 @@
 		"test": "tsc && node ./js/test.js"
 	},
 	"author": "",
-	"license": "MIT",
+	"license": "Apache-2.0 license",
 	"description": ""
 }
