@@ -8,8 +8,7 @@ import { boolOption, intOption, stringOption } from './utils';
 import tasks from '../tasks';
 import { imageRequestAndView } from './commons';
 import Scope from '../types/Scope';
-
-const { default: axios } = require('axios');
+import axios from 'axios';
 
 const slash = new SlashCommandBuilder()
 	.setName('imagine')
@@ -82,7 +81,7 @@ async function execute<K extends keyof ClientEvents>(
 	const seed = interaction.options.getInteger('seed');
 
 	// create the request object
-	let req: any = {
+	const req: any = {
 		prompt,
 		plms,
 		n_iter,

@@ -1,14 +1,14 @@
-import { ActionRowBuilder, ButtonInteraction, ModalBuilder, ModalSubmitInteraction, TextInputBuilder, TextInputStyle } from "discord.js";
-import { imageRequestAndView } from "../commands/commons";
-import tasks from "../tasks";
-const { default: axios } = require('axios');
+import axios from 'axios';
+import { ButtonInteraction, ModalSubmitInteraction } from 'discord.js';
+import { imageRequestAndView } from '../commands/commons';
+import tasks from '../tasks';
 
 export default async function reimagine(
 	interaction: ButtonInteraction | ModalSubmitInteraction,
 	imageNumber: number,
 	id: string,
 	prompt: string | undefined,
-	strength: string | number | undefined,
+	strength: string | number | undefined
 ) {
 	// load env
 	const serverIp = process.env['SERVER_IP'];
@@ -22,52 +22,65 @@ export default async function reimagine(
 
 	// check that there is a text channel
 	if (!channel) {
-		await interaction.reply(`Interaction.channel is null. This shouldn't have happened.`);
+		await interaction.reply(
+			`Interaction.channel is null. This shouldn't have happened.`
+		);
 		return;
 	}
 
 	if (!guildId) {
-		await interaction.reply(`Interaction.guildId is null. This shouldn't have happened.`);
+		await interaction.reply(
+			`Interaction.guildId is null. This shouldn't have happened.`
+		);
 		return;
 	}
 
 	const task = tasks.get(guildId, id);
 	if (!task) {
-		await interaction.reply(`No task found for this combination of guildId and id. This is probably a bug.`);
+		await interaction.reply(
+			`No task found for this combination of guildId and id. This is probably a bug.`
+		);
 		return;
 	}
 
 	// create the request object
-	let req: any = {
+	const req: any = {
 		prompt: task.prompt || prompt,
 		from_id: parseInt(id),
 		image_number: imageNumber,
 		strength: 0.8,
 	};
 	if (strength) {
-		if (typeof strength === 'string')
-			req.strength = parseInt(strength);
-		if (typeof strength === 'number')
-			req.strength = strength;
+		if (typeof strength === 'string') req.strength = parseInt(strength);
+		if (typeof strength === 'number') req.strength = strength;
 	}
 
 	// remove the null keys
 	for (const key in req)
-		if (req[key] === null || req[key] === undefined)
-			delete req[key];
+		if (req[key] === null || req[key] === undefined) delete req[key];
 
 	try {
 		// send the request to the AI server
 		console.log(`sending regeneration`);
 		const { data: res } = await axios.post(`http://${addr}/regen/`, req);
 		const [id, number_in_queue] = res.split(' ');
-		console.log(`initial response: id=${id}, number in queue=${number_in_queue}`);
+		console.log(
+			`initial response: id=${id}, number in queue=${number_in_queue}`
+		);
 
 		// add the id to the tasks collection
-		tasks.add({ guildId, id, prompt: prompt || task.prompt, task: `re-imagine: ${req.prompt}`, author: user.username });
+		tasks.add({
+			guildId,
+			id,
+			prompt: prompt || task.prompt,
+			task: `re-imagine: ${req.prompt}`,
+			author: user.username,
+		});
 
 		// notify the discord server that the prompt has been accepted
-		await interaction.reply(`# in queue: ${number_in_queue}, prompt accepted: \`${req.prompt}\``);
+		await interaction.reply(
+			`# in queue: ${number_in_queue}, prompt accepted: \`${req.prompt}\``
+		);
 
 		// wait for the server to reply with a ready message
 		await imageRequestAndView(addr, id, user, channel, task.task, 2, 2);

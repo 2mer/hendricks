@@ -1,4 +1,3 @@
-const { default: axios } = require('axios');
 import {
 	ChatInputCommandInteraction,
 	Client,
@@ -8,6 +7,7 @@ import {
 import Scope from '../types/Scope';
 import tasks from '../tasks';
 import Command from '../types/Command';
+import axios from 'axios';
 
 const slash = new SlashCommandBuilder()
 	.setName('queued')

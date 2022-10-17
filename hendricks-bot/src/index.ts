@@ -1,12 +1,10 @@
-import { Client } from 'discord.js';
+import { Client, GatewayIntentBits } from 'discord.js';
 import Scope from './types/Scope';
-
-import { GatewayIntentBits } from 'discord.js';
-
+import dotenv from 'dotenv';
 import events from './events';
 
 // load env
-require('dotenv').config();
+dotenv.config();
 const { TOKEN: token, LOG_LEVEL = 'error' } = process.env;
 
 if (LOG_LEVEL === 'verbose') {

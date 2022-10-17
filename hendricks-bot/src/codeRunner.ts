@@ -1,7 +1,7 @@
 import { Client, Message, PartialMessage, TextBasedChannel } from 'discord.js';
 import vm from 'vm';
 
-var contexts: Map<string, any> = new Map();
+const contexts: Map<string, any> = new Map();
 
 interface BlockOutput {
 	sourceMessage: Message | undefined;
@@ -103,7 +103,7 @@ export async function run(
 	guildId: string,
 	channel: TextBasedChannel,
 	userId: string,
-	code: String,
+	code: string,
 	sourceMessage: OptionalMessage
 ) {
 	// get the context and set the current channel to the current user
@@ -112,10 +112,7 @@ export async function run(
 
 	// bridge between the vm and node
 	const key = guildId + channel.id + userId;
-	// const outMessage = await channel.send('```\n```');
 
-	const empty = '```\n```';
-	// const outMessage = sourceMessage == null ? await channel.send(empty) : await sourceMessage.reply(empty);
 	context.session.prepareOutput(key, sourceMessage);
 
 	// run
