@@ -15,9 +15,13 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-		"index": "tsc && node ./js/index.js",
+		"preinstall": "npx only-allow pnpm",
+		"start": "tsc && node ./js/index.js",
 		"deploy": "tsc && node ./js/deploy-commands.js",
-		"test": "tsc && node ./js/test.js"
+		"test": "tsc && node ./js/test.js",
+		"docker:build": "docker build -t hendricks_image .",
+		"docker:run": "docker run -d --name hendricks_container hendricks_image",
+		"docker:stop": "docker stop hendricks_container"
 	},
 	"author": "",
 	"license": "Apache-2.0 license",
