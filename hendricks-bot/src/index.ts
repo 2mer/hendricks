@@ -1,14 +1,16 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
-import events from './events';
-
 // load env
 dotenv.config();
+
+import events from './events';
+import logger from './logger';
+
 const { TOKEN: token, LOG_LEVEL = 'error' } = process.env;
 
 if (LOG_LEVEL === 'verbose') {
 	import('@discordjs/voice').then(({ generateDependencyReport }) => {
-		console.log(generateDependencyReport());
+		logger.verbose(generateDependencyReport());
 	});
 }
 

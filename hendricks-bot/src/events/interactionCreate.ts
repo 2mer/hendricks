@@ -2,6 +2,7 @@ import { BaseInteraction, Client, ModalSubmitInteraction } from 'discord.js';
 import advancedSelectionModal from '../buttonCommands/advancedSelectionModal';
 import reimagine from '../buttonCommands/reimagine';
 import commands from '../commands';
+import logger from '../logger';
 import Event from '../types/Event';
 
 export default {
@@ -36,7 +37,7 @@ export default {
 				const fields = modalInteraction.fields;
 				const prompt = fields.getTextInputValue('prompt');
 
-				console.log(`modal interaction: ${id} ${prompt}`);
+				logger.verbose(`modal interaction: ${id} ${prompt}`);
 
 				let imageNumber;
 				try {
@@ -71,7 +72,7 @@ export default {
 			const message = interaction.message;
 			const label = interaction.component.label;
 			const buttonId = interaction.customId;
-			console.log(
+			logger.verbose(
 				`button interaction: label=${label}, buttonId=${buttonId}`
 			);
 
@@ -97,7 +98,7 @@ export default {
 
 			if (label.startsWith('V+')) {
 				const id = buttonId.split('-')[1];
-				console.log(`button interaction: label=${label}, id=${id}`);
+				logger.verbose(`button interaction: label=${label}, id=${id}`);
 
 				const modal = advancedSelectionModal(id);
 				await interaction.showModal(modal);
@@ -107,7 +108,7 @@ export default {
 			if (label.match(/V\d/)) {
 				const imageNumber = parseInt(label.substring(1));
 				const id = buttonId.split('-')[1];
-				console.log(
+				logger.verbose(
 					`button interaction: label=${label}, id=${id}, imageNumber=${imageNumber}`
 				);
 				await reimagine(

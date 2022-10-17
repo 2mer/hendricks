@@ -14,6 +14,7 @@ import {
 	GuildMember,
 	SlashCommandBuilder,
 } from 'discord.js';
+import logger from '../logger';
 import Command from '../types/Command';
 
 const slash = new SlashCommandBuilder()
@@ -39,7 +40,7 @@ async function execute<K extends keyof ClientEvents>(
 	);
 
 	if (!voiceChannels) {
-		console.log(
+		logger.error(
 			`<@${user.id}> Could not extract voice channels. This is a bug.`
 		);
 		return;

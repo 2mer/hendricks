@@ -1,13 +1,14 @@
 import { Client, MessageReaction, User } from 'discord.js';
 import { runFromReaction } from '../codeRunner';
 import { errorEmoji, runEmoji } from '../constants';
+import logger from '../logger';
 import Event from '../types/Event';
 
 export default {
 	name: 'messageReactionAdd',
 	once: false,
 	async execute(client: Client, ...args: any[]) {
-		console.log('message reaction add');
+		logger.verbose('message reaction add');
 
 		const messageReaction = args[0] as MessageReaction;
 		const user = args[1] as User;

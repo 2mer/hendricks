@@ -1,5 +1,6 @@
 import { Client, Message, PartialMessage, TextBasedChannel } from 'discord.js';
 import vm from 'vm';
+import logger from './logger';
 
 const contexts: Map<string, any> = new Map();
 
@@ -50,7 +51,7 @@ function getOrCreateContext(client: Client, guildId: string): any {
 		ctx = {
 			session: new Session(client, guildId),
 			setTimeout,
-			debug: console.log,
+			debug: logger.debug,
 		};
 		contexts.set(guildId, vm.createContext(ctx));
 	}
