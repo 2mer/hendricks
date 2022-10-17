@@ -4,7 +4,6 @@ import {
 	createAudioResource,
 	getVoiceConnection,
 	joinVoiceChannel,
-	NoSubscriberBehavior,
 } from '@discordjs/voice';
 import {
 	ChannelType,
@@ -13,19 +12,17 @@ import {
 	ClientEvents,
 	Collection,
 	GuildMember,
-	Interaction,
 	SlashCommandBuilder,
-	ThreadMemberManager,
 } from 'discord.js';
-import { ClientExtras } from '../extra';
-import Command from './command';
+import Scope from '../types/Scope';
+import Command from '../types/Command';
 
 const slash = new SlashCommandBuilder()
 	.setName('play')
 	.setDescription('Plays a song the specified file');
 
 async function execute<K extends keyof ClientEvents>(
-	extras: ClientExtras,
+	extras: Scope,
 	client: Client,
 	...args: ClientEvents[K]
 ) {

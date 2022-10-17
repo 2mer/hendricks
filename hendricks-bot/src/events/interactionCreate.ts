@@ -1,26 +1,31 @@
-import { BaseInteraction, Client, Interaction, ModalSubmitInteraction } from "discord.js";
-import advancedSelectionModal from "../buttonCommands/advancedSelectionModal";
-import reimagine from "../buttonCommands/reimagine";
-import commands from "../commands/commands";
-import { ClientExtras } from "../extra";
-import Event from "./event";
+import { BaseInteraction, Client, ModalSubmitInteraction } from 'discord.js';
+import advancedSelectionModal from '../buttonCommands/advancedSelectionModal';
+import reimagine from '../buttonCommands/reimagine';
+import commands from '../commands';
+import Scope from '../types/Scope';
+import Event from '../types/Event';
 
 export default {
 	name: 'interactionCreate',
 	once: false,
-	async execute(extras: ClientExtras, client: Client, ...args: any[]) {
+	async execute(scope: Scope, client: Client, ...args: any[]) {
 		const interaction = args[0] as BaseInteraction;
 
 		if (interaction.isChatInputCommand()) {
-			const command = commands.find(command => command.slash.name == interaction.commandName);
+			const command = commands.find(
+				(command) => command.slash.name == interaction.commandName
+			);
 
 			if (!command) return;
 
 			try {
-				await command.execute(extras, client, ...args);
+				await command.execute(scope, client, ...args);
 			} catch (error) {
 				console.error(error);
-				await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+				await interaction.reply({
+					content: 'There was an error while executing this command!',
+					ephemeral: true,
+				});
 			}
 		}
 
@@ -36,7 +41,9 @@ export default {
 
 				let imageNumber;
 				try {
-					imageNumber = parseFloat(fields.getTextInputValue('imageNumber'));
+					imageNumber = parseFloat(
+						fields.getTextInputValue('imageNumber')
+					);
 				} catch (e) {
 					await interaction.reply(`${e}`);
 					return;
@@ -50,7 +57,13 @@ export default {
 					return;
 				}
 
-				await reimagine(interaction, imageNumber, id, prompt.length == 0 ? undefined : prompt, strength);
+				await reimagine(
+					interaction,
+					imageNumber,
+					id,
+					prompt.length == 0 ? undefined : prompt,
+					strength
+				);
 				return;
 			}
 		}
@@ -59,10 +72,14 @@ export default {
 			const message = interaction.message;
 			const label = interaction.component.label;
 			const buttonId = interaction.customId;
-			console.log(`button interaction: label=${label}, buttonId=${buttonId}`);
+			console.log(
+				`button interaction: label=${label}, buttonId=${buttonId}`
+			);
 
 			if (!client.user) {
-				await interaction.reply(`client.user is undefined. This is a bug.`);
+				await interaction.reply(
+					`client.user is undefined. This is a bug.`
+				);
 				return;
 			}
 
@@ -91,12 +108,20 @@ export default {
 			if (label.match(/V\d/)) {
 				const imageNumber = parseInt(label.substring(1));
 				const id = buttonId.split('-')[1];
-				console.log(`button interaction: label=${label}, id=${id}, imageNumber=${imageNumber}`);
-				await reimagine(interaction, imageNumber, id, undefined, undefined);
+				console.log(
+					`button interaction: label=${label}, id=${id}, imageNumber=${imageNumber}`
+				);
+				await reimagine(
+					interaction,
+					imageNumber,
+					id,
+					undefined,
+					undefined
+				);
 				return;
 			}
 
 			await interaction.reply(`${message.content}: ${label}`);
 		}
-	}
+	},
 } as Event;

@@ -1,4 +1,9 @@
-import { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } from "discord.js";
+import {
+	ActionRowBuilder,
+	ModalBuilder,
+	TextInputBuilder,
+	TextInputStyle,
+} from 'discord.js';
 
 export default function advancedSelectionModal(id: string) {
 	const modal = new ModalBuilder()

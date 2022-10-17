@@ -1,9 +1,9 @@
 interface Task {
-	guildId: string,
-	id: string,
-	prompt: string,
-	task: string,
-	author: string,
+	guildId: string;
+	id: string;
+	prompt: string;
+	task: string;
+	author: string;
 }
 
 const idToTask = new Map<string, Task>();
@@ -23,4 +23,4 @@ function get(guildId: string, id: string) {
 export default {
 	add,
 	get,
-}
+};

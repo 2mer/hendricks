@@ -14,10 +14,13 @@ RUN npm install --ignore-scripts --global pnpm
 # RUN layer is only run if COPY layer is invalidated by file change 
 COPY package.json .
 COPY pnpm-lock.yaml .
-RUN pnpm install
+RUN pnpm install --prod
 
 # === App Code ===
 COPY . ./
+
+# === Build ===
+RUN pnpm build
 
 # === Run ===
 # expose ports for rest comms
