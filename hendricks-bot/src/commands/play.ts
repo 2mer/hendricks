@@ -77,7 +77,8 @@ async function execute<K extends keyof ClientEvents>(
 
 	player.on('error', (error) => {
 		console.error(
-			`Error: ${error.message} with resource ${(error as any).resource.metadata.title
+			`Error: ${error.message} with resource ${
+				(error as any).resource.metadata.title
 			}`
 		);
 	});

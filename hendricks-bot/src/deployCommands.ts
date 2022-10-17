@@ -23,7 +23,9 @@ const applicationCommands = commands.map((command) => command.slash.toJSON());
 rest.put(Routes.applicationCommands(clientId), { body: applicationCommands })
 	.then((data) =>
 		console.log(
-			`Successfully registered ${(data as any[]).length} application commands.`
+			`Successfully registered ${
+				(data as any[]).length
+			} application commands.`
 		)
 	)
 	.catch(console.error);

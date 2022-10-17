@@ -51,13 +51,13 @@ async function execute<K extends keyof ClientEvents>(
 		queued.length == 0
 			? 'no tasks queued!'
 			: queued
-				.map((id: number) => tasks.get(guildId, `${id}`))
-				.map((task) =>
-					task
-						? `${task.author} -> ${task.task}`
-						: `task from a different guild`
-				)
-				.join('\n');
+					.map((id: number) => tasks.get(guildId, `${id}`))
+					.map((task) =>
+						task
+							? `${task.author} -> ${task.task}`
+							: `task from a different guild`
+					)
+					.join('\n');
 
 	await interaction.reply(`<@${user.id}>` + '```' + message + '```');
 	// await channel.send();
