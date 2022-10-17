@@ -48,7 +48,7 @@ async function execute<K extends keyof ClientEvents>(clientExtras: ClientExtras,
 		return;
 	}
 
-	await interaction.editReply(`${res.out}`);
+	await interaction.editReply('```\n' + `${res.out}` + '```');
 }
 
 export default {

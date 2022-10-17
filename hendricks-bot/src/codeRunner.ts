@@ -3,26 +3,38 @@ import vm from "vm";
 
 var contexts: Map<string, any> = new Map();
 
+interface BlockOutput {
+	sourceMessage: Message | undefined,
+	message: Message | undefined,
+	outputs: string[]
+}
+
 class Session {
 	client: Client;
 	guildId: string;
 	userToChannel = new Map<string, TextBasedChannel>();
-	outputs = new Map<string, [Message, string[]]>();
+	outputs = new Map<string, BlockOutput>();
 
 	constructor(client: Client, guildId: string) {
 		this.client = client;
 		this.guildId = guildId;
 	}
 
-	prepareOutput(key: string, message: Message) {
-		this.outputs.set(key, [message, []])
+	prepareOutput(key: string, sourceMessage: Message | undefined) {
+		this.outputs.set(key, { sourceMessage, message: undefined, outputs: [] })
 	}
 
 	async addOutput(key: string, data: string) {
-		const [message, lines] = this.outputs.get(key)!;
-		lines.push(data);
-		if (message != null) {
-			await message.edit('```\n' + lines.join('\n') + '```');
+		const blockOutput = this.outputs.get(key)!;
+		blockOutput.outputs.push(data);
+
+		const content = '```\n' + blockOutput.outputs.join('\n') + '```';
+
+		if (blockOutput.sourceMessage) {
+			if (blockOutput.message)
+				await blockOutput.message.edit(content);
+			else
+				blockOutput.message = await blockOutput.sourceMessage.reply(content)
 		}
 	}
 }
@@ -32,6 +44,7 @@ function getOrCreateContext(client: Client, guildId: string): any {
 	if (ctx == null) {
 		ctx = {
 			session: new Session(client, guildId),
+			setTimeout,
 			debug: console.log
 		};
 		contexts.set(guildId, vm.createContext(ctx));
@@ -87,7 +100,8 @@ export async function run(
 	channel: TextBasedChannel,
 	userId: string,
 	code: String,
-	sourceMessage: OptionalMessage) {
+	sourceMessage: OptionalMessage,
+) {
 	// get the context and set the current channel to the current user
 	const context = getOrCreateContext(client, guildId);
 	context.session.userToChannel.set(userId, channel);
@@ -98,8 +112,7 @@ export async function run(
 
 	const empty = '```\n```';
 	// const outMessage = sourceMessage == null ? await channel.send(empty) : await sourceMessage.reply(empty);
-	const outMessage = sourceMessage == null ? null : await sourceMessage.reply(empty);
-	context.session.prepareOutput(key, outMessage);
+	context.session.prepareOutput(key, sourceMessage);
 
 	// run
 	const completeCode = `
