@@ -1,17 +1,15 @@
-import { Client, Message } from "discord.js";
-import { run, extractCode } from "../codeRunner";
-import { runEmoji } from "../constants";
-import { ClientExtras } from "../extra";
-import Event from "./event";
+import { Client, Message } from 'discord.js';
+import { extractCode } from '../codeRunner';
+import { runEmoji } from '../constants';
+import Scope from '../types/Scope';
+import Event from '../types/Event';
 
 export default {
 	name: 'messageCreate',
 	once: false,
-	async execute(extras: ClientExtras, client: Client, ...args: any[]) {
+	async execute(scope: Scope, client: Client, ...args: any[]) {
 		const message = args[0] as Message;
 		const user = message.author;
-		const channel = message.channel;
-		const content = message.content;
 		const guildId = message.guildId;
 
 		if (guildId == null) {

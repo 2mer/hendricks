@@ -1,12 +1,11 @@
 import { Client } from 'discord.js';
-import Command from '../commands/command';
-import { ClientExtras } from '../extra';
-import Event from './event';
+import Scope from '../types/Scope';
+import Event from '../types/Event';
 
 export default {
 	name: 'ready',
 	once: true,
-	execute: async (extras: ClientExtras, client: Client, ...args: any) => {
+	execute: async (scope: Scope, client: Client, ...args: any) => {
 		console.log(`Ready! Logged in as ${client.user!.tag}`);
 	},
 } as Event;

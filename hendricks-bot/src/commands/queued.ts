@@ -1,14 +1,23 @@
 const { default: axios } = require('axios');
-import { ChannelType, ChatInputCommandInteraction, Client, ClientEvents, Collection, GuildMember, Interaction, SlashCommandBuilder, ThreadMemberManager } from "discord.js";
-import { ClientExtras } from "../extra";
-import tasks from "../tasks";
-import Command from "./command";
+import {
+	ChatInputCommandInteraction,
+	Client,
+	ClientEvents,
+	SlashCommandBuilder,
+} from 'discord.js';
+import Scope from '../types/Scope';
+import tasks from '../tasks';
+import Command from '../types/Command';
 
 const slash = new SlashCommandBuilder()
 	.setName('queued')
 	.setDescription('Displays all the queued prompts and their authors');
 
-async function execute<K extends keyof ClientEvents>(extras: ClientExtras, client: Client, ...args: ClientEvents[K]) {
+async function execute<K extends keyof ClientEvents>(
+	extras: Scope,
+	client: Client,
+	...args: ClientEvents[K]
+) {
 	// extract interaction
 	const interaction = args[0] as ChatInputCommandInteraction;
 	const user = interaction.user;
@@ -22,12 +31,16 @@ async function execute<K extends keyof ClientEvents>(extras: ClientExtras, clien
 
 	// check that there is a text channel
 	if (!channel) {
-		await interaction.reply(`Interaction.channel is null. This shouldn't have happened.`);
+		await interaction.reply(
+			`Interaction.channel is null. This shouldn't have happened.`
+		);
 		return;
 	}
 
 	if (!guildId) {
-		await interaction.reply(`Interaction.guildId is null. This shouldn't have happened.`);
+		await interaction.reply(
+			`Interaction.guildId is null. This shouldn't have happened.`
+		);
 		return;
 	}
 
@@ -36,12 +49,17 @@ async function execute<K extends keyof ClientEvents>(extras: ClientExtras, clien
 	const queued = res as number[];
 
 	// get the tasks and create the message
-	const message = queued.length == 0 ?
-		'no tasks queued!' :
-		queued
-			.map((id: number) => tasks.get(guildId, `${id}`))
-			.map((task) => task ? `${task.author} -> ${task.task}` : `task from a different guild`)
-			.join('\n');
+	const message =
+		queued.length == 0
+			? 'no tasks queued!'
+			: queued
+					.map((id: number) => tasks.get(guildId, `${id}`))
+					.map((task) =>
+						task
+							? `${task.author} -> ${task.task}`
+							: `task from a different guild`
+					)
+					.join('\n');
 
 	await interaction.reply(`<@${user.id}>` + '```' + message + '```');
 	// await channel.send();

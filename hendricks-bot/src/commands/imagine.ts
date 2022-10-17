@@ -1,9 +1,13 @@
-import { SlashCommandBuilder, AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Client, ClientEvents, Interaction, SlashCommandStringOption } from "discord.js";
-import { buttonDelete, emojiNumbers } from "../constants";
-import { ClientExtras } from "../extra";
-import { boolOption, intOption, stringOption } from "./utils";
+import {
+	SlashCommandBuilder,
+	ChatInputCommandInteraction,
+	Client,
+	ClientEvents,
+} from 'discord.js';
+import { boolOption, intOption, stringOption } from './utils';
 import tasks from '../tasks';
-import { imageRequestAndView } from "./commons";
+import { imageRequestAndView } from './commons';
+import Scope from '../types/Scope';
 
 const { default: axios } = require('axios');
 
@@ -17,10 +21,22 @@ const slash = new SlashCommandBuilder()
 	.addIntegerOption(intOption('w', 'image width, in pixels', false))
 	.addIntegerOption(intOption('c', 'latent channels', false))
 	.addIntegerOption(intOption('f', 'downsampling factor', false))
-	.addIntegerOption(intOption('n_samples', 'how many samples to produce for each given prompt. A.k.a batch size.', false))
-	.addIntegerOption(intOption('seed', 'the seed (for reproducible sampling)', false));
+	.addIntegerOption(
+		intOption(
+			'n_samples',
+			'how many samples to produce for each given prompt. A.k.a batch size.',
+			false
+		)
+	)
+	.addIntegerOption(
+		intOption('seed', 'the seed (for reproducible sampling)', false)
+	);
 
-async function execute<K extends keyof ClientEvents>(clientExtras: ClientExtras, client: Client, ...args: ClientEvents[K]) {
+async function execute<K extends keyof ClientEvents>(
+	scope: Scope,
+	client: Client,
+	...args: ClientEvents[K]
+) {
 	const interaction = args[0] as ChatInputCommandInteraction;
 
 	// load env
@@ -35,12 +51,16 @@ async function execute<K extends keyof ClientEvents>(clientExtras: ClientExtras,
 
 	// check that there is a text channel
 	if (!channel) {
-		await interaction.reply(`Interaction.channel is null. This shouldn't have happened.`);
+		await interaction.reply(
+			`Interaction.channel is null. This shouldn't have happened.`
+		);
 		return;
 	}
 
 	if (!guildId) {
-		await interaction.reply(`Interaction.guildId is null. This shouldn't have happened.`);
+		await interaction.reply(
+			`Interaction.guildId is null. This shouldn't have happened.`
+		);
 		return;
 	}
 
@@ -76,21 +96,30 @@ async function execute<K extends keyof ClientEvents>(clientExtras: ClientExtras,
 
 	// remove the null keys
 	for (const key in req)
-		if (req[key] === null || req[key] === undefined)
-			delete req[key];
+		if (req[key] === null || req[key] === undefined) delete req[key];
 
 	try {
 		// send the request to the AI server
 		console.log(`sending request ${prompt}`);
 		const { data: res } = await axios.post(`http://${addr}/gen/`, req);
 		const [id, number_in_queue] = res.split(' ');
-		console.log(`initial response: id=${id}, number in queue=${number_in_queue}`);
+		console.log(
+			`initial response: id=${id}, number in queue=${number_in_queue}`
+		);
 
 		// add the id to the tasks collection
-		tasks.add({ guildId, id, prompt, task: `imagine: ${prompt}`, author: user.username });
+		tasks.add({
+			guildId,
+			id,
+			prompt,
+			task: `imagine: ${prompt}`,
+			author: user.username,
+		});
 
 		// notify the discord server that the prompt has been accepted
-		await interaction.reply(`# in queue: ${number_in_queue}, prompt accepted: \`${prompt}\``);
+		await interaction.reply(
+			`# in queue: ${number_in_queue}, prompt accepted: \`${prompt}\``
+		);
 
 		// wait for the server to reply with a ready message
 		await imageRequestAndView(addr, id, user, channel, prompt, 6, 3);

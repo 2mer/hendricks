@@ -1,19 +1,19 @@
-import { AudioPlayer } from '@discordjs/voice';
 import { Client } from 'discord.js';
-import { ClientExtras } from './extra';
+import Scope from './types/Scope';
 
-import { GatewayIntentBits, ClientUser } from 'discord.js';
-import { createAudioPlayer } from '@discordjs/voice';
+import { GatewayIntentBits } from 'discord.js';
 
-import events from './events/events';
-
-const { generateDependencyReport } = require('@discordjs/voice');
-
-console.log(generateDependencyReport());
+import events from './events';
 
 // load env
 require('dotenv').config();
-const token = process.env['TOKEN'];
+const { TOKEN: token, LOG_LEVEL = 'error' } = process.env;
+
+if (LOG_LEVEL === 'verbose') {
+	import('@discordjs/voice').then(({ generateDependencyReport }) => {
+		console.log(generateDependencyReport());
+	});
+}
 
 // create the client and its associated variables
 const client = new Client({
@@ -26,7 +26,7 @@ const client = new Client({
 		GatewayIntentBits.GuildVoiceStates,
 	],
 });
-const clientExtras: ClientExtras = {
+const clientExtras: Scope = {
 	player: undefined,
 	queue: [],
 };

@@ -1,12 +1,12 @@
-import { ChatInputCommandInteraction, Client, Message, PartialMessage, TextBasedChannel } from "discord.js";
-import vm from "vm";
+import { Client, Message, PartialMessage, TextBasedChannel } from 'discord.js';
+import vm from 'vm';
 
 var contexts: Map<string, any> = new Map();
 
 interface BlockOutput {
-	sourceMessage: Message | undefined,
-	message: Message | undefined,
-	outputs: string[]
+	sourceMessage: Message | undefined;
+	message: Message | undefined;
+	outputs: string[];
 }
 
 class Session {
@@ -21,7 +21,11 @@ class Session {
 	}
 
 	prepareOutput(key: string, sourceMessage: Message | undefined) {
-		this.outputs.set(key, { sourceMessage, message: undefined, outputs: [] })
+		this.outputs.set(key, {
+			sourceMessage,
+			message: undefined,
+			outputs: [],
+		});
 	}
 
 	async addOutput(key: string, data: string) {
@@ -31,10 +35,11 @@ class Session {
 		const content = '```\n' + blockOutput.outputs.join('\n') + '```';
 
 		if (blockOutput.sourceMessage) {
-			if (blockOutput.message)
-				await blockOutput.message.edit(content);
+			if (blockOutput.message) await blockOutput.message.edit(content);
 			else
-				blockOutput.message = await blockOutput.sourceMessage.reply(content)
+				blockOutput.message = await blockOutput.sourceMessage.reply(
+					content
+				);
 		}
 	}
 }
@@ -45,7 +50,7 @@ function getOrCreateContext(client: Client, guildId: string): any {
 		ctx = {
 			session: new Session(client, guildId),
 			setTimeout,
-			debug: console.log
+			debug: console.log,
 		};
 		contexts.set(guildId, vm.createContext(ctx));
 	}
@@ -54,18 +59,17 @@ function getOrCreateContext(client: Client, guildId: string): any {
 
 type OptionalMessage = Message | PartialMessage | undefined;
 
-export function extractCode(content: string): { lang: string, code: string } | undefined {
+export function extractCode(
+	content: string
+): { lang: string; code: string } | undefined {
 	// split into lines
 	const lines = content.split(/\n\r?/);
-	if (lines.length < 2)
-		return undefined;
-
+	if (lines.length < 2) return undefined;
 
 	// content must start and end with '```'
 	const firstLine = lines[0];
 	const lastLine = lines[lines.length - 1];
-	if (!firstLine.startsWith('```') || lastLine != '```')
-		return undefined;
+	if (!firstLine.startsWith('```') || lastLine != '```') return undefined;
 
 	// extract and return
 	return {
@@ -81,11 +85,11 @@ export function runFromReaction(
 	messageId: string,
 	userId: string,
 	content: string,
-	message: OptionalMessage): any {
+	message: OptionalMessage
+): any {
 	// extract the code and the language
 	const extracted = extractCode(content);
-	if (extracted == null)
-		return;
+	if (extracted == null) return;
 	const { lang, code } = extracted;
 
 	// run and pipe the output to a reply
@@ -100,7 +104,7 @@ export async function run(
 	channel: TextBasedChannel,
 	userId: string,
 	code: String,
-	sourceMessage: OptionalMessage,
+	sourceMessage: OptionalMessage
 ) {
 	// get the context and set the current channel to the current user
 	const context = getOrCreateContext(client, guildId);
@@ -115,18 +119,18 @@ export async function run(
 	context.session.prepareOutput(key, sourceMessage);
 
 	// run
-	const completeCode = `
+	const completeCode =
+		`
 		var log = async (data) => {
 			// const channel = session.userToChannel.get('${userId}');
 			// await channel.send('' + data);
 			await session.addOutput('${key}', data);
-		}\n`+
-		code;
+		}\n` + code;
 	try {
 		const out = vm.runInContext(completeCode, context);
 		return {
 			out,
-			error: undefined
+			error: undefined,
 		};
 	} catch (e) {
 		return {

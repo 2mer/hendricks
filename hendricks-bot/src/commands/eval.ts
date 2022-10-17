@@ -1,14 +1,23 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, Client, ClientEvents, SlashCommandStringOption, Channel, TextBasedChannel } from "discord.js";
-import { run } from "../codeRunner";
-import { ClientExtras } from "../extra";
-import { stringOption } from "./utils";
+import {
+	SlashCommandBuilder,
+	ChatInputCommandInteraction,
+	Client,
+	ClientEvents,
+} from 'discord.js';
+import { run } from '../codeRunner';
+import Scope from '../types/Scope';
+import { stringOption } from './utils';
 
 const slash = new SlashCommandBuilder()
 	.setName('eval')
-	.setDescription('evaluate a JS expression in the current channel\'s context')
+	.setDescription("evaluate a JS expression in the current channel's context")
 	.addStringOption(stringOption('code', 'the code to run', true));
 
-async function execute<K extends keyof ClientEvents>(clientExtras: ClientExtras, client: Client, ...args: ClientEvents[K]) {
+async function execute<K extends keyof ClientEvents>(
+	scope: Scope,
+	client: Client,
+	...args: ClientEvents[K]
+) {
 	const interaction = args[0] as ChatInputCommandInteraction;
 
 	// const client = interaction.client;
