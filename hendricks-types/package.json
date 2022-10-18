@@ -7,7 +7,7 @@
 	"scripts": {
 		"update-overrides": "node update-dependencies.js",
 		"build": "pnpm run update-overrides && tsc --emitDeclarationOnly",
-		"publish": "pnpm --dir ./publish publish"
+		"publish": "cd publish && pnpm publish"
 	},
 	"keywords": [],
 	"author": "",
