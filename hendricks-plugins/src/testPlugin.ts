@@ -1,3 +1,3 @@
-import logger from 'hendricks-types/types/logger';
+import logger from 'hendricks-types/logger';
 
 logger.info('Hello from test plugin!');
