@@ -1,13 +1,13 @@
 lockfileVersion: 5.4
 
 specifiers:
-  hendricks-types: ^1.0.1
+  hendricks-types: ^1.0.2
 
 dependencies:
-  hendricks-types: 1.0.1
+  hendricks-types: 1.0.2
 
 packages:
 
-  /hendricks-types/1.0.1:
-    resolution: {integrity: sha512-oU7/KgRQFtYvpNsAe1JolwHr6Sqa3If4VWuBoEfy2Huz+c+FEaZTROgYjdLBJaorXt2e0LdgCg1tHULn5wdkTw==}
+  /hendricks-types/1.0.2:
+    resolution: {integrity: sha512-WZwQYirbfH55PCuaPWioTx722+fiuAArb5/Xq8A1oQwk5iyc1p42h7s0m93CWPfs0BrS9loJZkNE593rjJxC9g==}
     dev: false

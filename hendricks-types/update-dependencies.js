@@ -6,6 +6,7 @@ const packageOverrides = require('./package.json');
 const packageJson = { ...hendricksBotDependencies, ...packageOverrides };
 
 delete packageJson.scripts;
+delete packageJson.private;
 
 if (!fs.existsSync('./publish')) {
 	fs.mkdirSync('./publish');
