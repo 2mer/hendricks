@@ -1,6 +1,7 @@
 import { REST, Routes } from 'discord.js';
 import { config } from 'dotenv';
 import commands from './commands';
+import logger from './logger';
 
 config();
 const token = process.env['TOKEN'] as string;
@@ -12,7 +13,7 @@ const rest = new REST({ version: '10' }).setToken(token);
 // add guild only commands
 rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: [] })
 	.then((data) =>
-		console.log(
+		logger.info(
 			`Successfully registered ${(data as any[]).length} guild commands.`
 		)
 	)
@@ -22,7 +23,7 @@ rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: [] })
 const applicationCommands = commands.map((command) => command.slash.toJSON());
 rest.put(Routes.applicationCommands(clientId), { body: applicationCommands })
 	.then((data) =>
-		console.log(
+		logger.info(
 			`Successfully registered ${
 				(data as any[]).length
 			} application commands.`

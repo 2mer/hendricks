@@ -1,10 +1,7 @@
 {
 	"root": true,
 	"parser": "@typescript-eslint/parser",
-	"plugins": [
-		"@typescript-eslint",
-		"import"
-	],
+	"plugins": ["@typescript-eslint", "import"],
 	"extends": [
 		"eslint:recommended",
 		"plugin:@typescript-eslint/eslint-recommended",
@@ -18,10 +15,7 @@
 	},
 	"settings": {
 		"import/parsers": {
-			"@typescript-eslint/parser": [
-				".ts",
-				".tsx"
-			]
+			"@typescript-eslint/parser": [".ts", ".tsx"]
 		},
 		"import/resolver": {
 			"typescript": {

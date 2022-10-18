@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ButtonInteraction, ModalSubmitInteraction } from 'discord.js';
 import { imageRequestAndView } from '../commands/commons';
+import logger from '../logger';
 import tasks from '../tasks';
 
 export default async function reimagine(
@@ -61,10 +62,10 @@ export default async function reimagine(
 
 	try {
 		// send the request to the AI server
-		console.log(`sending regeneration`);
+		logger.verbose(`sending regeneration`);
 		const { data: res } = await axios.post(`http://${addr}/regen/`, req);
 		const [id, number_in_queue] = res.split(' ');
-		console.log(
+		logger.verbose(
 			`initial response: id=${id}, number in queue=${number_in_queue}`
 		);
 
@@ -85,8 +86,8 @@ export default async function reimagine(
 		// wait for the server to reply with a ready message
 		await imageRequestAndView(addr, id, user, channel, task.task, 2, 2);
 	} catch (err) {
-		console.log('error!');
-		console.error(err);
+		logger.error('error!');
+		logger.error(err);
 		await channel.send('unknown error');
 	}
 }

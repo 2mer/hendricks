@@ -8,6 +8,7 @@ import { boolOption, intOption, stringOption } from './utils';
 import tasks from '../tasks';
 import { imageRequestAndView } from './commons';
 import axios from 'axios';
+import logger from '../logger';
 
 const slash = new SlashCommandBuilder()
 	.setName('imagine')
@@ -97,10 +98,10 @@ async function execute<K extends keyof ClientEvents>(
 
 	try {
 		// send the request to the AI server
-		console.log(`sending request ${prompt}`);
+		logger.verbose(`sending request ${prompt}`);
 		const { data: res } = await axios.post(`http://${addr}/gen/`, req);
 		const [id, number_in_queue] = res.split(' ');
-		console.log(
+		logger.verbose(
 			`initial response: id=${id}, number in queue=${number_in_queue}`
 		);
 
@@ -121,8 +122,8 @@ async function execute<K extends keyof ClientEvents>(
 		// wait for the server to reply with a ready message
 		await imageRequestAndView(addr, id, user, channel, prompt, 6, 3);
 	} catch (err) {
-		console.log('error!');
-		console.error(err);
+		logger.error('error!');
+		logger.error(err);
 		await channel.send('unknown error');
 	}
 }

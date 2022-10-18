@@ -9,6 +9,7 @@ import {
 } from 'discord.js';
 import EventSource from 'eventsource';
 import { buttonDelete } from '../constants';
+import logger from '../logger';
 
 export function imageRequestAndView(
 	addr: string,
@@ -32,7 +33,7 @@ export function imageRequestAndView(
 				`<@${user.id}> Your dish is ready! It will be served shortly! It was created in ${seconds} seconds.`
 			);
 
-			console.log(`requesting: ${id}`);
+			logger.verbose(`requesting: ${id}`);
 
 			const req = {
 				method: 'get',
@@ -119,8 +120,8 @@ export function imageRequestAndView(
 					});
 				})
 				.catch(async (err: any) => {
-					console.log('axios error');
-					console.log(err);
+					logger.error('axios error');
+					logger.error(err);
 					await channel.send('axios error');
 				});
 		}

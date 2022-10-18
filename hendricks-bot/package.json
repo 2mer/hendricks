@@ -23,7 +23,8 @@
 		"dotenv": "^16.0.2",
 		"eventsource": "^2.0.2",
 		"libsodium-wrappers": "^0.7.10",
-		"typescript": "^4.8.4"
+		"typescript": "^4.8.4",
+		"winston": "^3.8.2"
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^5.40.0",
