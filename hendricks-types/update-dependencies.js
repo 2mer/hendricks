@@ -8,6 +8,8 @@ const packageJson = { ...hendricksBotDependencies, ...packageOverrides };
 delete packageJson.scripts;
 delete packageJson.private;
 
+packageJson.scripts = { pub: 'pnpm publish' };
+
 if (!fs.existsSync('./publish')) {
 	fs.mkdirSync('./publish');
 }
