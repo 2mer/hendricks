@@ -1,7 +1,9 @@
 import { Client, Message } from 'discord.js';
-import { extractCode } from '../codeRunner';
+import { extractCode } from '../runBlocks/index';
 import { runEmoji } from '../constants';
 import Event from '../types/Event';
+
+const supportedLanguages = ['js', 'latex'];
 
 export default {
 	name: 'messageCreate',
@@ -11,27 +13,26 @@ export default {
 		const user = message.author;
 		const guildId = message.guildId;
 
-		if (guildId == null) {
+		if (!guildId) {
 			message.reply('guildId is null. Aborting.');
 			return;
 		}
 
-		if (client.user == null) {
+		if (!client.user) {
 			message.reply('client.user is null. Aborting.');
 			return;
 		}
 
 		// ignore self messages
-		if (user.id == client.user.id) {
+		if (user.id == client.user.id)
 			return;
-		}
 
 		// extract the code from the message
 		const extracted = extractCode(message.content);
-		if (extracted == null) {
+		if (!extracted)
 			return;
-		}
 
-		await message.react(runEmoji);
+		if (supportedLanguages.includes(extracted.lang))
+			await message.react(runEmoji);
 	},
 } as Event;

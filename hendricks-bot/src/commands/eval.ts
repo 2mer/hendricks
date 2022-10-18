@@ -4,7 +4,7 @@ import {
 	Client,
 	ClientEvents,
 } from 'discord.js';
-import { run } from '../codeRunner';
+import { runJs } from '../runBlocks/codeRunner';
 import { stringOption } from './utils';
 
 const slash = new SlashCommandBuilder()
@@ -48,7 +48,7 @@ async function execute<K extends keyof ClientEvents>(
 	// await interaction.reply(`Running!`);
 	await interaction.reply('In progress...');
 
-	const res = await run(client, guildId, channel, userId, code, undefined);
+	const res = await runJs(client, guildId, channel, userId, code, undefined);
 
 	if (res.error) {
 		await interaction.editReply(`error: ${res.error}`);
