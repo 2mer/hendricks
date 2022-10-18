@@ -1,0 +1,8 @@
+{
+	"extends": "../hendricks-bot/tsconfig.json",
+	"compilerOptions": {
+		"emitDeclarationOnly": true,
+		"outDir": "./types",
+		"declaration": true,
+	}
+}
