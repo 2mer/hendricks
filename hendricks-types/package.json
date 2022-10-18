@@ -1,7 +1,7 @@
 {
 	"private": true,
 	"name": "hendricks-types",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "",
 	"main": "index.d.ts",
 	"scripts": {
