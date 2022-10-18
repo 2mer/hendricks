@@ -1,10 +1,11 @@
 {
 	"name": "hendricks-types",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "",
-	"main": "types/index.d.ts",
+	"main": "index.d.ts",
 	"scripts": {
-		"build": "tsc --emitDeclarationOnly"
+		"update-overrides": "node update-dependencies.js",
+		"build": "pnpm run update-overrides && tsc --emitDeclarationOnly"
 	},
 	"keywords": [],
 	"author": "",

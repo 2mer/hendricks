@@ -1,1 +1,0 @@
-# this literally exists just to tell npm to not ignore types (which is ignored in gitignore) on publish
