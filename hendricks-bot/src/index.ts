@@ -1,10 +1,13 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
+import path from 'path';
 // load env
 dotenv.config();
 
 import events from './events';
 import logger from './logger';
+import LocalPluginLoader from './plugin-system/PluginLoader/LocalPluginLoader';
+import PluginManager from './plugin-system/PluginManager';
 
 const { TOKEN: token, LOG_LEVEL = 'error' } = process.env;
 
@@ -35,3 +38,12 @@ events.forEach((event) => {
 
 // start the client
 client.login(token);
+
+// start the plugins
+PluginManager.start(
+	new LocalPluginLoader({
+		pluginsPath: path.join(__dirname, 'plugins'),
+	})
+);
+
+export { client };

@@ -1,7 +1,7 @@
 import { Client, Message } from 'discord.js';
-import { extractCode } from '../codeRunner';
 import { runEmoji } from '../constants';
 import Event from '../types/Event';
+import parseCodeblock from '../util/parseCodeblock';
 
 export default {
 	name: 'messageCreate',
@@ -27,8 +27,8 @@ export default {
 		}
 
 		// extract the code from the message
-		const extracted = extractCode(message.content);
-		if (extracted == null) {
+		const extracted = parseCodeblock(message.content);
+		if (!extracted) {
 			return;
 		}
 

@@ -6,8 +6,8 @@
 	"scripts": {
 		"preinstall": "npx only-allow pnpm",
 		"build": "tsc",
-		"start": "node ./js/index.js",
-		"start:dev": "ts-node-dev src/index.ts",
+		"start": "node -r tsconfig-paths/register ./js/index.js",
+		"start:dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
 		"lint": "prettier --write . && eslint . --fix --ext .ts",
 		"deploy": "node ./js/deploy-commands.js",
 		"docker:build": "docker build -t hendricks_image .",
@@ -23,6 +23,7 @@
 		"dotenv": "^16.0.2",
 		"eventsource": "^2.0.2",
 		"libsodium-wrappers": "^0.7.10",
+		"tsconfig-paths": "^4.1.0",
 		"typescript": "^4.8.4",
 		"winston": "^3.8.2"
 	},
