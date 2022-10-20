@@ -2,8 +2,17 @@ import logger from '@hendricks/logger';
 import Plugin from '../types/Plugin';
 import PluginLoader from '../types/PluginLoader';
 
+let loadedResolve: any;
+const loadedPromise = new Promise((resolve) => {
+	loadedResolve = resolve;
+});
+
 export default class PluginManager {
 	private static plugins = {} as { [key: string]: Plugin };
+
+	static async loaded() {
+		return loadedPromise;
+	}
 
 	static register(...plugins: Plugin[]) {
 		plugins.forEach((plugin) => {
@@ -42,11 +51,19 @@ export default class PluginManager {
 
 		// start all of the plugins
 		plugins.forEach((plugin) => {
-			plugin.start();
+			plugin.start?.();
 		});
+
+		loadedResolve?.();
 	}
 
 	static getPlugin(id: string) {
 		return this.plugins[id];
+	}
+
+	static getCommands() {
+		return Object.values(this.plugins)
+			.map((plugin) => plugin.commands || [])
+			.reduce((acc, curr) => acc.concat(curr), []);
 	}
 }

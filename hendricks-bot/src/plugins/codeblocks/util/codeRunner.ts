@@ -1,7 +1,7 @@
 import { Client, Message, PartialMessage, TextBasedChannel } from 'discord.js';
 import vm from 'vm';
-import logger from './logger';
-import parseCodeblock from './util/parseCodeblock';
+import logger from '../../../logger';
+import parseCodeblock from './parseCodeblock';
 
 const contexts: Map<string, any> = new Map();
 

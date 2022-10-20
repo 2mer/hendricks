@@ -1,13 +1,9 @@
-import { Client, Message } from 'discord.js';
-import { runEmoji } from '../constants';
-import Event from '../types/Event';
-import parseCodeblock from '../util/parseCodeblock';
+import client from '@hendricks/client';
+import { runEmoji } from '@hendricks/constants';
+import parseCodeblock from '@hendricks/plugins/codeblocks/util/parseCodeblock';
 
-export default {
-	name: 'messageCreate',
-	once: false,
-	async execute(client: Client, ...args: any[]) {
-		const message = args[0] as Message;
+export default function codeblockReactions() {
+	client.on('messageCreate', async (message) => {
 		const user = message.author;
 		const guildId = message.guildId;
 
@@ -33,5 +29,5 @@ export default {
 		}
 
 		await message.react(runEmoji);
-	},
-} as Event;
+	});
+}

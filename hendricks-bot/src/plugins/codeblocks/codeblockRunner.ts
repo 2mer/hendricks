@@ -1,17 +1,12 @@
-import { Client, MessageReaction, User } from 'discord.js';
-import { runFromReaction } from '../codeRunner';
-import { errorEmoji, runEmoji } from '../constants';
-import logger from '../logger';
-import Event from '../types/Event';
+import { runFromReaction } from './util/codeRunner';
+import { errorEmoji, runEmoji } from '../../constants';
+import logger from '../../logger';
+import client from '@hendricks/client';
 
-export default {
-	name: 'messageReactionAdd',
-	once: false,
-	async execute(client: Client, ...args: any[]) {
+export default function codeblockRunner() {
+	client.on('messageReactionAdd', async (messageReaction, user) => {
 		logger.verbose('message reaction add');
 
-		const messageReaction = args[0] as MessageReaction;
-		const user = args[1] as User;
 		const message = messageReaction.message;
 		const emoji = messageReaction.emoji.name;
 		const channel = message.channel;
@@ -45,5 +40,5 @@ export default {
 				}
 			}
 		}
-	},
-} as Event;
+	});
+}

@@ -4,11 +4,15 @@ import {
 	Client,
 	ClientEvents,
 } from 'discord.js';
-import { boolOption, intOption, stringOption } from './utils';
+import {
+	boolOption,
+	intOption,
+	stringOption,
+} from '../../../util/commandUtils';
 import tasks from '../tasks';
-import { imageRequestAndView } from './commons';
+import { imageRequestAndView } from '../util/commons';
 import axios from 'axios';
-import logger from '../logger';
+import logger from '../../../logger';
 
 const slash = new SlashCommandBuilder()
 	.setName('imagine')

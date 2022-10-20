@@ -1,16 +1,19 @@
+import Command from '@hendricks/types/Command';
 import {
 	SlashCommandBuilder,
 	ChatInputCommandInteraction,
 	Client,
 	ClientEvents,
 } from 'discord.js';
-import { run } from '../codeRunner';
-import { stringOption } from './utils';
+import { run } from '../util/codeRunner';
+import { stringOption } from '../../../util/commandUtils';
 
 const slash = new SlashCommandBuilder()
 	.setName('eval')
 	.setDescription("evaluate a JS expression in the current channel's context")
-	.addStringOption(stringOption('code', 'the code to run', true));
+	.addStringOption(
+		stringOption('code', 'the code to run', true)
+	) as SlashCommandBuilder;
 
 async function execute<K extends keyof ClientEvents>(
 	client: Client,
@@ -61,4 +64,4 @@ async function execute<K extends keyof ClientEvents>(
 export default {
 	slash,
 	execute,
-};
+} as Command;

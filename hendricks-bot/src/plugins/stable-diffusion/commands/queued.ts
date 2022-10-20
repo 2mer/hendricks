@@ -5,7 +5,7 @@ import {
 	SlashCommandBuilder,
 } from 'discord.js';
 import tasks from '../tasks';
-import Command from '../types/Command';
+import Command from '../../../types/Command';
 import axios from 'axios';
 
 const slash = new SlashCommandBuilder()

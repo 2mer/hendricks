@@ -1,7 +1,7 @@
+import { imageRequestAndView } from '@hendricks/plugins/stable-diffusion/util/commons';
+import logger from '@hendricks/logger';
 import axios from 'axios';
 import { ButtonInteraction, ModalSubmitInteraction } from 'discord.js';
-import { imageRequestAndView } from '../commands/commons';
-import logger from '../logger';
 import tasks from '../tasks';
 
 export default async function reimagine(

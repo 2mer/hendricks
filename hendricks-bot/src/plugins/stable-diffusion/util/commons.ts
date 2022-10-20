@@ -8,8 +8,8 @@ import {
 	User,
 } from 'discord.js';
 import EventSource from 'eventsource';
-import { buttonDelete } from '../constants';
-import logger from '../logger';
+import { buttonDelete } from '../../../constants';
+import logger from '../../../logger';
 
 export function imageRequestAndView(
 	addr: string,
