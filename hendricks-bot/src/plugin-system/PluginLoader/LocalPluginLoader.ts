@@ -1,5 +1,5 @@
-import Plugin from '../Plugin';
-import PluginLoader from './PluginLoader';
+import Plugin from '../../types/Plugin';
+import PluginLoader from '../../types/PluginLoader';
 import path from 'path';
 import logger from '@hendricks/logger';
 

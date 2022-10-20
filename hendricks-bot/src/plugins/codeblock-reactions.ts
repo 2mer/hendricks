@@ -1,6 +1,6 @@
 import { client } from '@hendricks';
 import { runEmoji } from '@hendricks/constants';
-import Plugin from '@hendricks/plugin-system/Plugin';
+import Plugin from '@hendricks/types/Plugin';
 import parseCodeblock from '@hendricks/util/parseCodeblock';
 
 // this should later transform to a fully fledged code block runner plugin

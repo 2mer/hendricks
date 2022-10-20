@@ -33,10 +33,10 @@
 			"@hendricks": [
 				"./src/index.ts"
 			],
-			"@hendricks/types/*": [
+			"hendricks-types/*": [
 				"./src/*"
 			],
-			"@hendricks/types": [
+			"hendricks-types": [
 				"./src/index.ts"
 			],
 		}, /* Specify a set of entries that re-map imports to additional lookup locations. */

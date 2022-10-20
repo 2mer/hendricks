@@ -1,6 +1,6 @@
 import logger from '@hendricks/logger';
-import Plugin from './Plugin';
-import PluginLoader from './PluginLoader/PluginLoader';
+import Plugin from '../types/Plugin';
+import PluginLoader from '../types/PluginLoader';
 
 export default class PluginManager {
 	private static plugins = {} as { [key: string]: Plugin };
