@@ -4,6 +4,6 @@
 	"version": "1.0.0",
 	"license": "Apache-2.0 license",
 	"dependencies": {
-		"hendricks-pdk": "^1.0.8"
+		"hendricks-pdk": "^1.0.11"
 	}
 }
