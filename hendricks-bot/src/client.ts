@@ -1,6 +1,8 @@
 import { BaseInteraction, Client, GatewayIntentBits } from 'discord.js';
 import CommandRegistry from './CommandRegistry';
 import commands from './commands';
+import logger from './logger';
+import { initPlugins } from './plugins';
 
 const { TOKEN: token } = process.env;
 
@@ -40,6 +42,12 @@ client.on('interactionCreate', async (...args: any[]) => {
 			});
 		}
 	}
+});
+
+client.once('ready', () => {
+	logger.info(`Ready! Logged in as ${client.user!.tag}`);
+
+	initPlugins(client);
 });
 
 // start the client

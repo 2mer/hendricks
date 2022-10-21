@@ -1,6 +1,6 @@
 import client from '@hendricks/client';
 import logger from '@hendricks/logger';
-import Plugin from '@hendricks/types/Plugin';
+import Plugin from '@hendricks/types/IPlugin';
 import { BaseInteraction, ModalSubmitInteraction } from 'discord.js';
 import commands from './commands';
 import advancedSelectionModal from './components/advancedSelectionModal';

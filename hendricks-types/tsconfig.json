@@ -5,4 +5,7 @@
 		"outDir": "./publish",
 		"declaration": true,
 	},
+	"include": [
+		"../hendricks-bot/src/pdk.ts"
+	]
 }

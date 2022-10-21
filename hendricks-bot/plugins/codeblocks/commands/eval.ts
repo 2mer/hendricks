@@ -1,4 +1,4 @@
-import Command from '@hendricks/types/Command';
+import ICommand from '@hendricks/types/ICommand';
 import {
 	SlashCommandBuilder,
 	ChatInputCommandInteraction,
@@ -64,4 +64,4 @@ async function execute<K extends keyof ClientEvents>(
 export default {
 	slash,
 	execute,
-} as Command;
+} as ICommand;

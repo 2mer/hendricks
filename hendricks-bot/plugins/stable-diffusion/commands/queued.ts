@@ -5,7 +5,7 @@ import {
 	SlashCommandBuilder,
 } from 'discord.js';
 import tasks from '../tasks';
-import Command from '../../../types/Command';
+import ICommand from '../../../types/ICommand';
 import axios from 'axios';
 
 const slash = new SlashCommandBuilder()
@@ -66,4 +66,4 @@ async function execute<K extends keyof ClientEvents>(
 export default {
 	slash,
 	execute,
-} as Command;
+} as ICommand;

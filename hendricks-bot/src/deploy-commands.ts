@@ -3,10 +3,10 @@ config();
 
 import { REST, Routes } from 'discord.js';
 import logger from './logger';
-import Command from './types/Command';
+import ICommand from './types/ICommand';
 import client from './client';
-import PluginManager from './plugin-system/PluginManager';
 import CommandRegistry from './CommandRegistry';
+import events from './events';
 
 const token = process.env['TOKEN'] as string;
 const guildId = process.env['GUILD_ID'] as string;
@@ -23,7 +23,7 @@ rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: [] })
 	)
 	.catch(console.error);
 
-export async function deployCommands(commands: Command[]) {
+export async function deployCommands(commands: ICommand[]) {
 	// add global commands
 	const applicationCommands = commands.map((command) =>
 		command.slash.toJSON()
@@ -41,13 +41,8 @@ export async function deployCommands(commands: Command[]) {
 		.catch(console.error);
 }
 
-client.once('ready', async () => {
-	await PluginManager.loaded();
-	CommandRegistry.register(...PluginManager.getCommands());
-
+events.on('register:commands', async () => {
 	await deployCommands(CommandRegistry.commands);
 
-	setTimeout(() => {
-		client.destroy();
-	}, 1000);
+	client.destroy();
 });

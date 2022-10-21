@@ -19,9 +19,6 @@ RUN pnpm install --prod
 # === App Code ===
 COPY . ./
 
-# === Build ===
-RUN pnpm build
-
 # === Run ===
 # expose ports for rest comms
 EXPOSE 80 443
