@@ -1,9 +1,10 @@
 {
 	"private": true,
 	"name": "hendricks-pdk",
-	"version": "1.0.9",
+	"version": "1.0.11",
 	"description": "",
-	"main": "pdk.d.ts",
+	"main": "pdk.js",
+	"types": "pdk.d.ts",
 	"scripts": {
 		"update-overrides": "node update-dependencies.js",
 		"build": "pnpm run update-overrides && tsc",
