@@ -7,9 +7,9 @@ export const id = 'codeblocks';
 // plugin commands
 export { default as commands } from './commands';
 
-export async function init({ events }: PluginContext) {
-	events.on('plugins:start', () => {
-		codeblockReactions();
-		codeblockRunner();
+export async function init(ctx: PluginContext) {
+	ctx.events.on('plugins:start', () => {
+		codeblockReactions(ctx);
+		codeblockRunner(ctx);
 	});
 }

@@ -1,9 +1,8 @@
+import { PluginContext } from 'hendricks-pdk';
+import { errorEmoji, runEmoji } from './emoji';
 import { runFromReaction } from './util/codeRunner';
-import { errorEmoji, runEmoji } from '../../constants';
-import logger from '../../logger';
-import client from '@hendricks/client';
 
-export default function codeblockRunner() {
+export default function codeblockRunner({ client, logger }: PluginContext) {
 	client.on('messageReactionAdd', async (messageReaction, user) => {
 		logger.verbose('message reaction add');
 

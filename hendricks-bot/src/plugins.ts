@@ -4,7 +4,7 @@ import fs from 'fs';
 import IPlugin from './types/IPlugin';
 import CommandRegistry from './CommandRegistry';
 import events from './events';
-import logger from './logger';
+import logger, { createLabeledLogger } from './logger';
 import { Client } from 'discord.js';
 
 const pluginManager = new PluginManager<IPlugin>();
@@ -43,7 +43,7 @@ export async function initPlugins(client: Client) {
 		idToPlugin.set(id, plugin);
 	});
 
-	const context = {
+	const baseContext = {
 		client,
 		pluginManager,
 		events,
@@ -53,7 +53,12 @@ export async function initPlugins(client: Client) {
 	// init all plugins
 	await Promise.all(
 		pluginManager.plugins.map((plugin) =>
-			plugin.init ? plugin.init(context) : Promise.resolve()
+			plugin.init
+				? plugin.init({
+						...baseContext,
+						logger: createLabeledLogger(plugin.id),
+				  })
+				: Promise.resolve()
 		)
 	);
 

@@ -1,8 +1,8 @@
-import client from '@hendricks/client';
-import { runEmoji } from '@hendricks/constants';
-import parseCodeblock from '@hendricks/plugins/codeblocks/util/parseCodeblock';
+import { PluginContext } from 'hendricks-pdk';
+import { runEmoji } from './emoji';
+import parseCodeblock from './util/parseCodeblock';
 
-export default function codeblockReactions() {
+export default function codeblockReactions({ client }: PluginContext) {
 	client.on('messageCreate', async (message) => {
 		const user = message.author;
 		const guildId = message.guildId;

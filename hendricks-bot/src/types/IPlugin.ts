@@ -3,6 +3,7 @@ import { PluginManager } from '@sgty/plugin-system';
 import { Client } from 'discord.js';
 import CommandRegistry from '../CommandRegistry';
 import { Events } from '../events';
+import { Logger } from 'winston';
 
 export default interface IPlugin {
 	id: string;
@@ -15,4 +16,5 @@ export type PluginContext = {
 	pluginManager: PluginManager<IPlugin>;
 	commandRegistry: CommandRegistry;
 	events: Events;
+	logger: Logger;
 };
