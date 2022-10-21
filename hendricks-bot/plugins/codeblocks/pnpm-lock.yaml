@@ -1,10 +1,10 @@
 lockfileVersion: 5.4
 
 specifiers:
-  hendricks-pdk: ^1.0.5
+  hendricks-pdk: ^1.0.6
 
 dependencies:
-  hendricks-pdk: 1.0.5
+  hendricks-pdk: 1.0.6
 
 packages:
 
@@ -438,8 +438,8 @@ packages:
     resolution: {integrity: sha512-8Rf9Y83NBReMnx0gFzA8JImQACstCYWUplepDa9xprwwtmgEZUF0h/i5xSA625zB/I37EtrswSST6OXxwaaIJQ==}
     dev: false
 
-  /hendricks-pdk/1.0.5:
-    resolution: {integrity: sha512-/wBwAHl+GADWJ16fJhgkxeHAEBHHQ8MiG5KvLDhljSLAQxn4zLydrOwzTH6C6V4d3GbhACOwvkCvPiYE2Z4S7A==}
+  /hendricks-pdk/1.0.6:
+    resolution: {integrity: sha512-ld+61hN/a5CI+3xReox/jk3xiAD3Q2zkvvZJMSYY8IOta+1UB+fKVaU8QopZP70rMvOx1wKTATBwyhxiot5upg==}
     dependencies:
       '@discordjs/opus': 0.8.0
       '@discordjs/voice': 0.11.0_@discordjs+opus@0.8.0
