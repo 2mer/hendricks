@@ -1,4 +1,3 @@
-import { IPluginProvider, PluginManager } from '@sgty/plugin-system';
 import path from 'path';
 import fs from 'fs';
 import IPlugin from './types/IPlugin';
@@ -6,31 +5,27 @@ import CommandRegistry from './CommandRegistry';
 import events from './events';
 import logger, { createLabeledLogger } from './logger';
 import { Client } from 'discord.js';
+import PluginManager from './plugin-system/PluginManager';
 
-const pluginManager = new PluginManager<IPlugin>();
+const pluginManager = new PluginManager();
 const idToPlugin = new Map();
 
-class LocalPluginProvider implements IPluginProvider<IPlugin> {
-	pluginFolderPath: string;
+async function loadPlugins(pluginFolderPath: string): Promise<IPlugin[]> {
+	const folders = await fs.promises.readdir(pluginFolderPath);
+	const plugins = await Promise.all(
+		folders
+			.filter((n) => n !== 'stable-diffusion')
+			.map((name) => import(path.join(pluginFolderPath, name)) as any)
+	);
 
-	constructor(pluginFolderPath: string) {
-		this.pluginFolderPath = pluginFolderPath;
-	}
-
-	async providePlugins(): Promise<IPlugin[]> {
-		const folders = await fs.promises.readdir(this.pluginFolderPath);
-
-		return folders.map(
-			(name) => import(path.join(this.pluginFolderPath, name)) as any
-		);
-	}
+	return plugins as any[];
 }
 
 export async function initPlugins(client: Client) {
 	// load plugin instances
-	await pluginManager.registerPlugins(
-		new LocalPluginProvider(path.join(__dirname, '..', 'plugins'))
-	);
+	const plugins = await loadPlugins(path.join(__dirname, '..', 'plugins'));
+
+	pluginManager.register(...plugins);
 
 	pluginManager.plugins.forEach((plugin) => {
 		const { id } = plugin;
@@ -73,6 +68,8 @@ export async function initPlugins(client: Client) {
 	CommandRegistry.register(...commands);
 
 	events.emit('register:commands');
+
+	console.log(pluginManager.plugins);
 }
 
 export default pluginManager;

@@ -16,7 +16,6 @@
 	"dependencies": {
 		"@discordjs/opus": "^0.8.0",
 		"@discordjs/voice": "^0.11.0",
-		"@sgty/plugin-system": "^1.0.4",
 		"@types/eventsource": "^1.1.9",
 		"axios": "^0.27.2",
 		"discord.js": "^14.5.0",
