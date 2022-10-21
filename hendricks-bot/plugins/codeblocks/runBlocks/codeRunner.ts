@@ -1,7 +1,6 @@
 import { Client, Message, PartialMessage, TextBasedChannel } from 'discord.js';
 import vm from 'vm';
 import { logger } from '..';
-import parseCodeblock from './parseCodeblock';
 
 const contexts: Map<string, any> = new Map();
 
@@ -61,27 +60,7 @@ function getOrCreateContext(client: Client, guildId: string): any {
 
 type OptionalMessage = Message | PartialMessage | undefined;
 
-export function runFromReaction(
-	client: Client,
-	guildId: string,
-	channel: TextBasedChannel,
-	messageId: string,
-	userId: string,
-	content: string,
-	message: OptionalMessage
-) {
-	// extract the code and the language
-	const extracted = parseCodeblock(content);
-	if (!extracted) return;
-	const { lang, code } = extracted;
-
-	// run and pipe the output to a reply
-	if (lang === 'js') {
-		return run(client, guildId, channel, userId, code, message);
-	}
-}
-
-export async function run(
+export async function runJs(
 	client: Client,
 	guildId: string,
 	channel: TextBasedChannel,

@@ -46,7 +46,7 @@ export default async function reimagine(
 
 	// create the request object
 	const req: any = {
-		prompt: task.prompt || prompt,
+		prompt: prompt || task.prompt,
 		from_id: parseInt(id),
 		image_number: imageNumber,
 		strength: 0.8,
@@ -73,7 +73,7 @@ export default async function reimagine(
 		tasks.add({
 			guildId,
 			id,
-			prompt: prompt || task.prompt,
+			prompt: req.prompt,
 			task: `re-imagine: ${req.prompt}`,
 			author: user.username,
 		});
