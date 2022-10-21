@@ -1,12 +1,11 @@
-import ICommand from '@hendricks/types/ICommand';
 import {
 	SlashCommandBuilder,
 	ChatInputCommandInteraction,
 	Client,
 	ClientEvents,
 } from 'discord.js';
+import { ICommand, stringOption } from 'hendricks-pdk';
 import { run } from '../util/codeRunner';
-import { stringOption } from '../../../util/commandUtils';
 
 const slash = new SlashCommandBuilder()
 	.setName('eval')

@@ -6,7 +6,7 @@
 	"main": "pdk.d.ts",
 	"scripts": {
 		"update-overrides": "node update-dependencies.js",
-		"build": "pnpm run update-overrides && tsc --emitDeclarationOnly",
+		"build": "pnpm run update-overrides && tsc",
 		"pub": "pnpm build && pnpm --dir publish run pub"
 	},
 	"keywords": [],
