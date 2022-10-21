@@ -4,6 +4,6 @@ export default class CommandRegistry {
 	static commands: ICommand[] = [];
 
 	static register(...c: ICommand[]) {
-		this.commands.concat(c);
+		this.commands = this.commands.concat(c);
 	}
 }

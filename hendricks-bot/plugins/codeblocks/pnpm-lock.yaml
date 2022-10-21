@@ -1,10 +1,10 @@
 lockfileVersion: 5.4
 
 specifiers:
-  hendricks-pdk: ^1.0.11
+  hendricks-pdk: ^1.0.12
 
 dependencies:
-  hendricks-pdk: 1.0.11
+  hendricks-pdk: 1.0.12
 
 packages:
 
@@ -121,10 +121,6 @@ packages:
   /@sapphire/snowflake/3.2.2:
     resolution: {integrity: sha512-ula2O0kpSZtX9rKXNeQMrHwNd7E4jPDJYUXmEGTFdMRfyfMw+FPyh04oKMjAiDuOi64bYgVkOV3MjK+loImFhQ==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
-    dev: false
-
-  /@sgty/plugin-system/1.0.4:
-    resolution: {integrity: sha512-BDkfAqyllaCvvBD5CecyMY9khuLxASLCKDYJgAfzEEbcRVh+rZNYCRBBF6omf1vgFLzXeslc7W6rM0KaGDvUUQ==}
     dev: false
 
   /@tokenizer/token/0.3.0:
@@ -438,12 +434,11 @@ packages:
     resolution: {integrity: sha512-8Rf9Y83NBReMnx0gFzA8JImQACstCYWUplepDa9xprwwtmgEZUF0h/i5xSA625zB/I37EtrswSST6OXxwaaIJQ==}
     dev: false
 
-  /hendricks-pdk/1.0.11:
-    resolution: {integrity: sha512-Nkq8POj1dKEt9nJOZyWTsTc0JYP6ZBuUwEyF+8gk8Ak06rnV7DLB6bxlkZofckfM61NGDcNzgKZT1gEXpGC2Ow==}
+  /hendricks-pdk/1.0.12:
+    resolution: {integrity: sha512-Gcy9+dkSXqJ+FpKzif9bIvHs9Tv5GIXNcC/9j9JIbKzMKWtVn1w8EiSM0/w10iBF2xYV3F7T6pGqak/0b865fg==}
     dependencies:
       '@discordjs/opus': 0.8.0
       '@discordjs/voice': 0.11.0_@discordjs+opus@0.8.0
-      '@sgty/plugin-system': 1.0.4
       '@types/eventsource': 1.1.9
       axios: 0.27.2
       discord.js: 14.6.0

@@ -25,5 +25,5 @@ events.on('plugins:init', () => {
 });
 
 events.on('register:commands', () => {
-	logger.info(`🗯  ${CommandRegistry.commands.length} Commands registered`);
+	logger.info(`💬 ${CommandRegistry.commands.length} Commands registered`);
 });

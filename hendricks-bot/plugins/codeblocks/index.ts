@@ -11,6 +11,7 @@ export let logger = null as null | PluginContext['logger'];
 
 export async function init(ctx: PluginContext) {
 	logger = ctx.logger;
+	logger.info('Codeblocks loaded!');
 
 	ctx.events.on('plugins:start', () => {
 		codeblockReactions(ctx);

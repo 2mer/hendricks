@@ -4,6 +4,6 @@ export default class PluginManager {
 	plugins: IPlugin[] = [];
 
 	register(...plugins: IPlugin[]) {
-		this.plugins.concat(plugins);
+		this.plugins = this.plugins.concat(plugins);
 	}
 }

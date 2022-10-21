@@ -68,8 +68,6 @@ export async function initPlugins(client: Client) {
 	CommandRegistry.register(...commands);
 
 	events.emit('register:commands');
-
-	console.log(pluginManager.plugins);
 }
 
 export default pluginManager;
