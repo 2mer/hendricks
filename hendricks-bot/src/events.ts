@@ -15,6 +15,8 @@ export type PluginEvents = {
 	message: (event: { sender: string; payload: any }) => void;
 };
 
-const events = new EventEmitter() as TypedEventEmitter<PluginEvents>;
+export type Events = TypedEventEmitter<PluginEvents>;
+
+const events = new EventEmitter() as Events;
 
 export default events;

@@ -46,6 +46,7 @@ export async function initPlugins(client: Client) {
 	const context = {
 		client,
 		pluginManager,
+		events,
 		commandRegistry: CommandRegistry,
 	};
 
