@@ -1,7 +1,7 @@
 {
 	"private": true,
 	"name": "@hendricks/pdk",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "",
 	"main": "pdk.d.ts",
 	"scripts": {
