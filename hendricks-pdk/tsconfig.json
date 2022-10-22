@@ -1,0 +1,10 @@
+{
+	"extends": "../hendricks-bot/tsconfig.json",
+	"compilerOptions": {
+		"outDir": "./publish",
+		"declaration": true,
+	},
+	"include": [
+		"../hendricks-bot/src/pdk.ts"
+	]
+}
