@@ -14,35 +14,33 @@ const clientId = process.env['CLIENT_ID'] as string;
 
 const rest = new REST({ version: '10' }).setToken(token);
 
-// add guild only commands
-rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: [] })
-	.then((data) =>
-		logger.info(
-			`Successfully registered ${(data as any[]).length} guild commands.`
-		)
-	)
-	.catch(console.error);
+const GUILD_COMMANDS_MODE = true;
 
-export async function deployCommands(commands: ICommand[]) {
+export async function deployCommands(commands: ICommand[], guildMode = false) {
 	// add global commands
 	const applicationCommands = commands.map((command) =>
 		command.slash.toJSON()
 	);
-	rest.put(Routes.applicationCommands(clientId), {
+
+	const route = guildMode
+		? Routes.applicationGuildCommands(clientId, guildId)
+		: Routes.applicationCommands(clientId);
+
+	rest.put(route, {
 		body: applicationCommands,
 	})
 		.then((data) =>
 			logger.info(
-				`Successfully registered ${
-					(data as any[]).length
-				} application commands.`
+				`Successfully registered ${(data as any[]).length} ${
+					guildMode ? 'guild' : 'application'
+				} commands.`
 			)
 		)
 		.catch(console.error);
 }
 
 events.on('register:commands', async () => {
-	await deployCommands(CommandRegistry.commands);
+	await deployCommands(CommandRegistry.commands, GUILD_COMMANDS_MODE);
 
 	client.destroy();
 });

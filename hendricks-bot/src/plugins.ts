@@ -7,14 +7,22 @@ import logger, { createLabeledLogger } from './logger';
 import { Client } from 'discord.js';
 import PluginManager from './plugin-system/PluginManager';
 
+const { REPL_ALLOWED = false } = process.env;
+
 const pluginManager = new PluginManager();
 const idToPlugin = new Map();
+
+const disabledPlugins = ['stable-diffusion'];
+
+if (!REPL_ALLOWED) {
+	disabledPlugins.push('repl');
+}
 
 async function loadPlugins(pluginFolderPath: string): Promise<IPlugin[]> {
 	const folders = await fs.promises.readdir(pluginFolderPath);
 	const plugins = await Promise.all(
 		folders
-			.filter((n) => n !== 'stable-diffusion')
+			.filter((n) => !disabledPlugins.includes(n))
 			.map((name) => import(path.join(pluginFolderPath, name)) as any)
 	);
 
