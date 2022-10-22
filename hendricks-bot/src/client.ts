@@ -26,9 +26,9 @@ client.on('interactionCreate', async (...args: any[]) => {
 	const interaction = args[0] as BaseInteraction;
 
 	if (interaction.isChatInputCommand()) {
-		const command = CommandRegistry.commands.find(
-			(command) => command.slash.name == interaction.commandName
-		);
+		const command = CommandRegistry.commands.find((command) => {
+			return command.slash.name === interaction.commandName;
+		});
 
 		if (!command) return;
 

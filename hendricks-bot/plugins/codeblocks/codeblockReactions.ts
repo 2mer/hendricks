@@ -1,8 +1,6 @@
 import { PluginContext } from 'hendricks-pdk';
-import { runEmoji } from './emoji';
+import { codeblockHandlers } from '.';
 import parseCodeblock from './util/parseCodeblock';
-
-const supportedLanguages = ['js', 'latex'];
 
 export default function codeblockReactions({ client }: PluginContext) {
 	client.on('messageCreate', async (message) => {
@@ -28,7 +26,10 @@ export default function codeblockReactions({ client }: PluginContext) {
 			return;
 		}
 
-		if (supportedLanguages.includes(extracted.lang))
-			await message.react(runEmoji);
+		codeblockHandlers.forEach((handler) => {
+			if (handler.test.test(extracted.lang)) {
+				handler.react(message);
+			}
+		});
 	});
 }

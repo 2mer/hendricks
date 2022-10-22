@@ -5,7 +5,7 @@ import {
 	ClientEvents,
 } from 'discord.js';
 import { ICommand, stringOption } from 'hendricks-pdk';
-import { runJs } from '../runBlocks/codeRunner';
+import { runJs } from '../handlers/jsHandler';
 
 const slash = new SlashCommandBuilder()
 	.setName('eval')
@@ -50,14 +50,20 @@ async function execute<K extends keyof ClientEvents>(
 	// await interaction.reply(`Running!`);
 	await interaction.reply('In progress...');
 
-	const res = await runJs(client, guildId, channel, userId, code, undefined);
+	try {
+		const out = runJs({
+			channel,
+			client,
+			code,
+			guildId,
+			userId,
+		});
 
-	if (res.error) {
-		await interaction.editReply(`error: ${res.error}`);
+		await interaction.editReply('```\n' + `${out}` + '```');
+	} catch (err) {
+		await interaction.editReply(`error: ${err}`);
 		return;
 	}
-
-	await interaction.editReply('```\n' + `${res.out}` + '```');
 }
 
 export default {

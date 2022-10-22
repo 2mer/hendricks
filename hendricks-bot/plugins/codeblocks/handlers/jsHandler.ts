@@ -1,6 +1,10 @@
-import { Client, Message, PartialMessage, TextBasedChannel } from 'discord.js';
 import vm from 'vm';
 import { logger } from '..';
+import { errorEmoji, runEmoji } from '../emoji';
+import ICodeblockHandler, {
+	ICodeblockRunContext,
+} from '../types/ICodeblockHandler';
+import { Client, Message, TextBasedChannel } from 'discord.js';
 
 const contexts: Map<string, any> = new Map();
 
@@ -58,16 +62,14 @@ function getOrCreateContext(client: Client, guildId: string): any {
 	return ctx;
 }
 
-type OptionalMessage = Message | PartialMessage | undefined;
-
-export async function runJs(
-	client: Client,
-	guildId: string,
-	channel: TextBasedChannel,
-	userId: string,
-	code: string,
-	sourceMessage: OptionalMessage
-) {
+export function runJs({
+	channel,
+	client,
+	code,
+	guildId,
+	sourceMessage,
+	userId,
+}: Omit<ICodeblockRunContext, 'emoji'>) {
 	// get the context and set the current channel to the current user
 	const context = getOrCreateContext(client, guildId);
 	context.session.userToChannel.set(userId, channel);
@@ -80,21 +82,33 @@ export async function runJs(
 	// run
 	const completeCode =
 		`
-		var log = async (data) => {
-			// const channel = session.userToChannel.get('${userId}');
-			// await channel.send('' + data);
-			await session.addOutput('${key}', data);
-		}\n` + code;
-	try {
-		const out = vm.runInContext(completeCode, context);
-		return {
-			out,
-			error: undefined,
-		};
-	} catch (e) {
-		return {
-			out: undefined,
-			error: e,
-		};
-	}
+var log = async (data) => {
+	// const channel = session.userToChannel.get('${userId}');
+	// await channel.send('' + data);
+	await session.addOutput('${key}', data);
+}\n` + code;
+	return vm.runInContext(completeCode, context);
 }
+
+export default {
+	id: 'jsHandler',
+
+	test: /^js$/,
+
+	async react(message) {
+		await message.react(runEmoji);
+	},
+
+	async run(ctx: ICodeblockRunContext) {
+		const { sourceMessage, emoji } = ctx;
+		if (emoji === runEmoji) {
+			try {
+				runJs(ctx);
+			} catch (err: any) {
+				sourceMessage?.reply(
+					`${errorEmoji} Failed to execute code: \`\`\`${err.toString()}\`\`\``
+				);
+			}
+		}
+	},
+} as ICodeblockHandler;
