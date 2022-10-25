@@ -6,11 +6,13 @@ import events from './events';
 import logger, { createLabeledLogger } from './logger';
 import { Client } from 'discord.js';
 import PluginManager from './plugin-system/PluginManager';
+import Awaitable, { IAwaitable } from './util/Awaitable';
 
 const { REPL_ALLOWED = false } = process.env;
 
+type PluginEntry = { instance: IPlugin; loaded: IAwaitable };
 const pluginManager = new PluginManager();
-const idToPlugin = new Map();
+const idToPlugin = new Map<string, PluginEntry>();
 
 const disabledPlugins = ['stable-diffusion'];
 
@@ -29,6 +31,18 @@ async function loadPlugins(pluginFolderPath: string): Promise<IPlugin[]> {
 	return plugins as any[];
 }
 
+export async function getPlugin(pluginId: string) {
+	if (idToPlugin.has(pluginId)) {
+		const entry = idToPlugin.get(pluginId)!;
+
+		await entry.loaded;
+
+		return entry;
+	}
+
+	return undefined;
+}
+
 export async function initPlugins(client: Client) {
 	// load plugin instances
 	const plugins = await loadPlugins(path.join(__dirname, '..', 'plugins'));
@@ -43,7 +57,7 @@ export async function initPlugins(client: Client) {
 		}
 
 		logger.info(`Registered plugin ${id}`);
-		idToPlugin.set(id, plugin);
+		idToPlugin.set(id, { instance: plugin, loaded: Awaitable() });
 	});
 
 	const baseContext = {
@@ -55,13 +69,14 @@ export async function initPlugins(client: Client) {
 
 	// init all plugins
 	await Promise.all(
-		pluginManager.plugins.map((plugin) =>
-			plugin.init
+		[...idToPlugin.values()].map(({ instance: plugin, loaded }) =>
+			(plugin.init
 				? plugin.init({
 						...baseContext,
 						logger: createLabeledLogger(plugin.id),
 				  })
 				: Promise.resolve()
+			).then(() => loaded.resolve())
 		)
 	);
 

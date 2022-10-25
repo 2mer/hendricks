@@ -9,9 +9,10 @@
 		"lint": "prettier --write . && eslint . --fix --ext .ts",
 		"deploy:commands": "ts-node ./src/deploy-commands.ts",
 		"docker:build": "docker build -t hendricks_image .",
-		"docker:run": "docker run -d --name hendricks_container hendricks_image",
-		"docker:stop": "docker stop hendricks_container",
-		"plugins:link": "symlink-dir plugins ./node_modules/@plugins"
+		"docker:up": "docker-compose up -d",
+		"docker:down": "docker-compose down",
+		"plugins:link": "symlink-dir plugins ./node_modules/@plugins",
+		"plugins:install": "./install-plugins.sh"
 	},
 	"dependencies": {
 		"@discordjs/opus": "^0.8.0",
@@ -28,7 +29,8 @@
 		"tsconfig-paths": "^4.1.0",
 		"typed-emitter": "^2.1.0",
 		"typescript": "^4.8.4",
-		"winston": "^3.8.2"
+		"winston": "^3.8.2",
+		"ts-node-dev": "^2.0.0"
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^5.40.0",
@@ -37,7 +39,6 @@
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-import-resolver-typescript": "^3.5.1",
 		"eslint-plugin-import": "^2.26.0",
-		"prettier": "^2.7.1",
-		"ts-node-dev": "^2.0.0"
+		"prettier": "^2.7.1"
 	}
 }
