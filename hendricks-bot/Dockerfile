@@ -19,6 +19,12 @@ RUN pnpm install --prod
 # === App Code ===
 COPY . ./
 
+# === Plugins ===
+# link ./plugins/* folder to ./node_modules/@plugins/*
+RUN pnpm plugins:link
+# install ./plugins/*/package.json
+RUN pnpm plugins:install
+
 # === Run ===
 # expose ports for rest comms
 EXPOSE 80 443

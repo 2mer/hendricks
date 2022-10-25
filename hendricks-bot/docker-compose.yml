@@ -1,0 +1,7 @@
+services:
+  # this is the hendricks container
+  hendricks:
+    image: hendricks_image
+    build: .
+    environment:
+      - REPL_ALLOWED=true
