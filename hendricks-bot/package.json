@@ -7,7 +7,7 @@
 		"preinstall": "npx only-allow pnpm",
 		"start": "ts-node-dev -r tsconfig-paths/register src/index.ts",
 		"lint": "prettier --write . && eslint . --fix --ext .ts",
-		"deploy:commands": "ts-node ./src/deploy-commands.ts",
+		"commands:deploy": "ts-node ./src/deploy-commands.ts",
 		"docker:build": "docker build -t hendricks_image .",
 		"docker:up": "docker-compose up -d",
 		"docker:down": "docker-compose down",
