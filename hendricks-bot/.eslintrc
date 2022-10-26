@@ -30,5 +30,10 @@
 				"project": "./tsconfig.json"
 			}
 		}
-	}
+	},
+	"ignorePatterns": [
+		"webpack.config.js",
+		"node_modules",
+		"js"
+	]
 }

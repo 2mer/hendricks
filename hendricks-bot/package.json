@@ -12,7 +12,8 @@
 		"docker:up": "docker-compose up -d",
 		"docker:down": "docker-compose down",
 		"plugins:link": "symlink-dir plugins ./node_modules/@plugins",
-		"plugins:install": "./install-plugins.sh"
+		"plugins:install": "pnpm --filter \"./plugins/**\" install --prod",
+		"plugins:build": "pnpm --filter \"./plugins/**\" run --if-present build"
 	},
 	"dependencies": {
 		"@discordjs/opus": "^0.8.0",
