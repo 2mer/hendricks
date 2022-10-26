@@ -22,8 +22,10 @@ COPY . ./
 # === Plugins ===
 # link ./plugins/* folder to ./node_modules/@plugins/*
 RUN pnpm plugins:link
-# install ./plugins/*/package.json
+# run pnpm install on all plugins
 RUN pnpm plugins:install
+# run pnpm build on all plugins
+RUN pnpm plugins:build
 
 # === Run ===
 # expose ports for rest comms
