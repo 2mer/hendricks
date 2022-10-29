@@ -9,6 +9,8 @@ WORKDIR /app
 RUN apt-get -y update && apt-get -y upgrade && apt-get install -y ffmpeg
 # pnpm
 RUN npm install --ignore-scripts --global pnpm
+# link python3 to python
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
 # === Runtime Dependencies ===
 # RUN layer is only run if COPY layer is invalidated by file change 

@@ -6,7 +6,7 @@ export default {
 	name: '🐍 Python',
 
 	createProcess() {
-		return spawn('python', ['-i'], { shell: true });
+		return spawn('python3', ['-i'], { shell: true });
 	},
 	trimLine: /^\s*?>>>\s*?$/,
 } as IReplHandler;
