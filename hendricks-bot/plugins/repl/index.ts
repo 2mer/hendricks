@@ -40,8 +40,8 @@ export async function init(ctx: PluginContext) {
 		}
 
 		if (found) {
+			found.messageQueue.clear();
 			found.process.stdin.write(message.content + '\n');
-			// found.process.stdin.end();
 		}
 	});
 }

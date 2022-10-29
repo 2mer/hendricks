@@ -7,11 +7,21 @@ import {
 } from 'discord.js';
 import { ICommand } from 'hendricks-pdk';
 import { instances } from '..';
-import { spawn } from 'node:child_process';
+import handlers from '../handlers';
+import MessageQueue from '../util/MessageQueue';
 
 const slash = new SlashCommandBuilder()
 	.setName('repl')
-	.setDescription('creates a ts-node repl thread') as SlashCommandBuilder;
+	.setDescription('creates a repl thread')
+	.addStringOption((option) =>
+		option
+			.setName('type')
+			.setDescription('The repl type')
+			.setRequired(true)
+			.addChoices(
+				...handlers.map((h) => ({ name: h.name || h.id, value: h.id }))
+			)
+	) as SlashCommandBuilder;
 
 async function execute<K extends keyof ClientEvents>(
 	client: Client,
@@ -35,26 +45,40 @@ async function execute<K extends keyof ClientEvents>(
 		return;
 	}
 
+	const replType = interaction.options.getString('type');
+
+	const handler = handlers.find((h) => h.id === replType);
+
+	if (!handler)
+		throw new Error(
+			'This should not happen, are slash commands not in sync running code?'
+		);
+
 	async function createRepl() {
 		const thread = await (
 			interaction.channel as BaseGuildTextChannel
 		).threads.create({
-			name: `repl ${interaction.id}`,
+			name: `REPL (${handler?.name || handler?.id})`,
 			autoArchiveDuration: 60,
 			reason: 'Spawned from repl command',
 		});
 
 		await thread.join();
-		const proc = spawn('node', ['-i'], { shell: true });
-		const instance = { thread, process: proc };
+
+		const proc = handler!.createProcess();
+		const instance = {
+			thread,
+			process: proc,
+			messageQueue: new MessageQueue({ thread }),
+		};
 		instances.push(instance);
 
-		proc.stdout.on('data', (data) => {
+		async function handleData(data: any) {
 			let strData: string = data.toString();
 
 			strData = strData
 				.split('\n')
-				.filter((line) => line.replace(/\s/g, '') !== '>')
+				.filter((line) => !handler!.trimLine.test(line))
 				.join('\n');
 
 			const maxSize = 500;
@@ -63,13 +87,12 @@ async function execute<K extends keyof ClientEvents>(
 			}
 
 			if (strData) {
-				thread.send(`\`\`\`${strData}\`\`\``);
+				instance.messageQueue.push(strData);
 			}
-		});
+		}
 
-		proc.stderr.on('data', (data) => {
-			thread.send(`❌ \`\`\`${data}\`\`\``);
-		});
+		proc.stdout.on('data', handleData);
+		proc.stderr.on('data', handleData);
 
 		proc.on('close', (code) => {
 			thread.send(`child process exited with code ${code}`);
