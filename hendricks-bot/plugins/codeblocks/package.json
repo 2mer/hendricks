@@ -5,8 +5,13 @@
 	"license": "Apache-2.0 license",
 	"main": "index.ts",
 	"dependencies": {
-		"hendricks-pdk": "^1.0.12",
 		"mathjax": "^3.2.2",
 		"sharp": "^0.31.1"
+	},
+	"devDependencies": {
+		"hendricks-pdk": "^1.0.12"
+	},
+	"peerDependencies": {
+		"hendricks-pdk": "^1.0.12"
 	}
 }

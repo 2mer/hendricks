@@ -4,7 +4,10 @@
 	"version": "1.0.0",
 	"license": "Apache-2.0 license",
 	"main": "index.ts",
-	"dependencies": {
+	"devDependencies": {
+		"hendricks-pdk": "^1.0.12"
+	},
+	"peerDependencies": {
 		"hendricks-pdk": "^1.0.12"
 	}
 }
