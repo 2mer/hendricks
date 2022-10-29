@@ -41,7 +41,11 @@ export async function init(ctx: PluginContext) {
 
 		if (found) {
 			found.messageQueue.clear();
-			found.process.stdin.write(message.content + '\n');
+			const actualMessage = message.content.replace(
+				/^```\w*\s*(.*?)\s*```$/s,
+				'$1'
+			);
+			found.process.stdin.write(actualMessage + '\n');
 		}
 	});
 }
