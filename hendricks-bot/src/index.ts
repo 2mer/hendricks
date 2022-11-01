@@ -1,21 +1,9 @@
-import dotenv from 'dotenv';
-// load env
-dotenv.config();
-
-import events from './events';
-import logger from './logger';
-
-import './client';
-import pluginManager from './plugins';
-import CommandRegistry from './CommandRegistry';
-
-// after plugins have loaded, start plugins
-events.on('plugins:init', () => {
-	logger.info(`🧩 ${pluginManager.plugins.length} Plugins initialized`);
-
-	events.emit('plugins:start');
-});
-
-events.on('register:commands', () => {
-	logger.info(`💬 ${CommandRegistry.commands.length} Commands registered`);
-});
+export { default as Hendricks, IHendricksOptions } from './Hendricks';
+export { default as createClient } from './Client';
+export { default as createLabeledLogger } from './Logger';
+export { default as createEvents, Events, EventTypes } from './Events';
+export { default as CommandRegistry } from './registry/CommandRegistry';
+export { default as Plugin } from './registry/Plugin';
+export { default as PluginManager } from './registry/PluginManager';
+export * from './types';
+export { default as coreCommands } from './commands';

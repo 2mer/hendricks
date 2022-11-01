@@ -36,7 +36,7 @@ const labelData = {
 	maxSize: 0,
 };
 
-export function createLabeledLogger(label: string) {
+export default function createLabeledLogger(label: string) {
 	labelData.maxSize = Math.max(labelData.maxSize, label.length);
 
 	function getPadding() {
@@ -72,8 +72,4 @@ export function createLabeledLogger(label: string) {
 	});
 
 	return logger;
-}
-
-const logger = createLabeledLogger('hendricks');
-
-export default logger;
+};
