@@ -1,12 +1,17 @@
 {
 	"name": "hendricks-bot",
 	"description": "",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"license": "Apache-2.0 license",
 	"main": "src/index.ts",
 	"scripts": {
 		"preinstall": "npx only-allow pnpm",
 		"lint": "prettier --write . && eslint . --fix --ext .ts"
+	},
+	"pnpm": {
+		"overrides": {
+			"discord-api-types": "0.37.14"
+		}
 	},
 	"dependencies": {
 		"@types/eventsource": "^1.1.9",

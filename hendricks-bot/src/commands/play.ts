@@ -8,7 +8,6 @@ import {
 import {
 	ChannelType,
 	ChatInputCommandInteraction,
-	Client,
 	ClientEvents,
 	Collection,
 	GuildMember,
