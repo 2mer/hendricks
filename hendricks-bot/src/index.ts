@@ -7,3 +7,4 @@ export { default as Plugin } from './registry/Plugin';
 export { default as PluginManager } from './registry/PluginManager';
 export * from './types';
 export { default as coreCommands } from './commands';
+export * from './util';
