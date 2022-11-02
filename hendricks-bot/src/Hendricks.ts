@@ -32,6 +32,8 @@ export default class Hendricks {
 		this.events = createEvents();
 		this.logger = createLabeledLogger('hendricks');
 
+		this.pluginManager.register(...(this.options.plugins ?? []));
+
 		// handle slash commands
 		this.client.on('interactionCreate', async (...args: any[]) => {
 			const interaction = args[0] as BaseInteraction;
