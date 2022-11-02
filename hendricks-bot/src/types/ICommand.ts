@@ -1,6 +1,7 @@
-import { Awaitable, Client, SlashCommandBuilder } from 'discord.js';
+import { Awaitable, SlashCommandBuilder } from 'discord.js';
+import Hendricks from '../Hendricks';
 
 export default interface ICommand {
 	slash: SlashCommandBuilder;
-	execute: (client: Client, ...args: any[]) => Awaitable<void>;
+	execute: (hendricks: Hendricks, ...args: any[]) => Awaitable<void>;
 }
