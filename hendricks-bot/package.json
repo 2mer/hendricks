@@ -1,8 +1,9 @@
 {
 	"name": "hendricks-bot",
 	"description": "",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"license": "Apache-2.0 license",
+	"main": "src/index.ts",
 	"scripts": {
 		"preinstall": "npx only-allow pnpm",
 		"lint": "prettier --write . && eslint . --fix --ext .ts"
