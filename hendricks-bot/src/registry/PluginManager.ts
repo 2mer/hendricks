@@ -1,5 +1,5 @@
-import Hendricks from 'src/Hendricks';
-import Awaitable, { IAwaitable } from 'src/util/Awaitable';
+import Hendricks from '../Hendricks';
+import Awaitable, { IAwaitable } from '../util/Awaitable';
 import Plugin from './Plugin';
 
 type PluginEntry = { instance: Plugin; loaded: IAwaitable };
@@ -25,10 +25,9 @@ export default class PluginManager {
 	async init(hendricks: Hendricks) {
 		await Promise.all(
 			[...this.idToPlugin.values()].map(({ instance: plugin, loaded }) =>
-				(plugin.init
-					? plugin.init(hendricks)
-					: Promise.resolve()
-				).then(() => loaded.resolve())
+				(plugin.init ? plugin.init(hendricks) : Promise.resolve()).then(
+					() => loaded.resolve()
+				)
 			)
 		);
 

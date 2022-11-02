@@ -1,15 +1,13 @@
-import ICommand from "../types/ICommand";
-import createLabeledLogger from "src/Logger";
-import { Logger } from "winston";
-import Hendricks from "src/Hendricks";
-
-
+import ICommand from '../types/ICommand';
+import createLabeledLogger from '../Logger';
+import { Logger } from 'winston';
+import Hendricks from '../Hendricks';
 
 export default abstract class Plugin {
 	logger: Logger;
 
 	constructor() {
-		this.logger = createLabeledLogger(this.displayName)
+		this.logger = createLabeledLogger(this.displayName);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
