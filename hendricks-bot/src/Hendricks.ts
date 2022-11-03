@@ -67,7 +67,7 @@ export default class Hendricks {
 		});
 	}
 
-	async deployCommands({ target }: { target: 'GUILD' | 'GLOBAL' }) {
+	deployCommands({ target }: { target: 'GUILD' | 'GLOBAL' }) {
 		this.events.once('register:commands', async () => {
 			const rest = new REST({ version: '10' }).setToken(
 				this.options.token
@@ -103,6 +103,8 @@ export default class Hendricks {
 					target === 'GUILD' ? 'guild' : 'application'
 				} commands registered.`
 			);
+
+			this.destroy();
 		});
 	}
 
