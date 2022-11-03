@@ -68,41 +68,47 @@ export default class Hendricks {
 	}
 
 	async deployCommands({ target }: { target: 'GUILD' | 'GLOBAL' }) {
-		const rest = new REST({ version: '10' }).setToken(this.options.token);
+		this.events.once('register:commands', async () => {
+			const rest = new REST({ version: '10' }).setToken(
+				this.options.token
+			);
 
-		const applicationCommands = this.commandRegistry.commands.map(
-			(command) => command.slash.toJSON()
-		);
+			const applicationCommands = this.commandRegistry.commands.map(
+				(command) => command.slash.toJSON()
+			);
 
-		this.logger.info(
-			'😤 Registering commands:\n' +
-				this.commandRegistry.commands
-					.map((c) => `\t- /${c.slash.name}`)
-					.join('\n')
-		);
+			this.logger.info(
+				'😤 Registering commands:\n' +
+					this.commandRegistry.commands
+						.map((c) => `\t- /${c.slash.name}`)
+						.join('\n')
+			);
 
-		const route =
-			target === 'GUILD'
-				? Routes.applicationGuildCommands(
-						this.options.clientId,
-						this.options.guildId
-				  )
-				: Routes.applicationCommands(this.options.clientId);
+			const route =
+				target === 'GUILD'
+					? Routes.applicationGuildCommands(
+							this.options.clientId,
+							this.options.guildId
+					  )
+					: Routes.applicationCommands(this.options.clientId);
 
-		const data = await rest.put(route, {
-			body: applicationCommands,
+			const data = await rest.put(route, {
+				body: applicationCommands,
+			});
+
+			this.logger.info(
+				`${target === 'GUILD' ? '🚧' : '🌎'} ${
+					(data as any[]).length
+				} ${
+					target === 'GUILD' ? 'guild' : 'application'
+				} commands registered.`
+			);
 		});
-
-		this.logger.info(
-			`${target === 'GUILD' ? '🚧' : '🌎'} ${(data as any[]).length} ${
-				target === 'GUILD' ? 'guild' : 'application'
-			} commands registered.`
-		);
 	}
 
 	start() {
 		// after plugins have loaded, start plugins
-		this.events.on('plugins:init', () => {
+		this.events.once('plugins:init', () => {
 			this.logger.info(
 				`🧩 ${this.pluginManager.plugins.length} Plugins initialized`
 			);
@@ -110,7 +116,7 @@ export default class Hendricks {
 			this.events.emit('plugins:start');
 		});
 
-		this.events.on('register:commands', () => {
+		this.events.once('register:commands', () => {
 			this.logger.info(
 				`💬 ${this.commandRegistry.commands.length} Commands registered`
 			);
