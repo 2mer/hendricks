@@ -67,11 +67,18 @@ export default class Hendricks {
 		});
 	}
 
-	deployCommands({ target }: { target: 'GUILD' | 'GLOBAL' }) {
+	async deployCommands({ target }: { target: 'GUILD' | 'GLOBAL' }) {
 		const rest = new REST({ version: '10' }).setToken(this.options.token);
 
 		const applicationCommands = this.commandRegistry.commands.map(
 			(command) => command.slash.toJSON()
+		);
+
+		this.logger.info(
+			'😤 Registering commands:\n' +
+				this.commandRegistry.commands
+					.map((c) => `\t- /${c.slash.name}`)
+					.join('\n')
 		);
 
 		const route =
@@ -82,17 +89,15 @@ export default class Hendricks {
 				  )
 				: Routes.applicationCommands(this.options.clientId);
 
-		rest.put(route, {
+		const data = await rest.put(route, {
 			body: applicationCommands,
-		})
-			.then((data) =>
-				this.logger.info(
-					`Successfully registered ${(data as any[]).length} ${
-						target === 'GUILD' ? 'guild' : 'application'
-					} commands.`
-				)
-			)
-			.catch(console.error);
+		});
+
+		this.logger.info(
+			`${target === 'GUILD' ? '🚧' : '🌎'} ${(data as any[]).length} ${
+				target === 'GUILD' ? 'guild' : 'application'
+			} commands registered.`
+		);
 	}
 
 	start() {
