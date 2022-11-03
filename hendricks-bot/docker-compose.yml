@@ -1,9 +1,0 @@
-services:
-  # this is the hendricks container
-  hendricks:
-    image: hendricks_image
-    ports:
-      - "3000:3000"
-    build: .
-    environment:
-      - REPL_ALLOWED=true

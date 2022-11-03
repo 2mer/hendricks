@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import TypedEventEmitter from 'typed-emitter';
 
-export type PluginEvents = {
+export type EventTypes = {
 	// === lifecycle ===
 	// called after plugins completed init
 	'plugins:init': () => void;
@@ -15,8 +15,9 @@ export type PluginEvents = {
 	message: (event: { sender: string; payload: any }) => void;
 };
 
-export type Events = TypedEventEmitter<PluginEvents>;
+export type Events = TypedEventEmitter<EventTypes>;
 
-const events = new EventEmitter() as Events;
+export default function createEvents() {
+	return new EventEmitter() as Events;
+}
 
-export default events;

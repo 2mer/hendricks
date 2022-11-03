@@ -8,13 +8,12 @@ import {
 import {
 	ChannelType,
 	ChatInputCommandInteraction,
-	Client,
 	ClientEvents,
 	Collection,
 	GuildMember,
 	SlashCommandBuilder,
 } from 'discord.js';
-import logger from '../logger';
+import Hendricks from '../Hendricks';
 import ICommand from '../types/ICommand';
 
 const slash = new SlashCommandBuilder()
@@ -22,7 +21,7 @@ const slash = new SlashCommandBuilder()
 	.setDescription('Plays a song the specified file');
 
 async function execute<K extends keyof ClientEvents>(
-	client: Client,
+	hendricks: Hendricks,
 	...args: ClientEvents[K]
 ) {
 	const audioFilePath = process.env['AUDIO_FILE'] as string;
@@ -40,7 +39,7 @@ async function execute<K extends keyof ClientEvents>(
 	);
 
 	if (!voiceChannels) {
-		logger.error(
+		hendricks.logger.error(
 			`<@${user.id}> Could not extract voice channels. This is a bug.`
 		);
 		return;
