@@ -65,6 +65,12 @@ export default class Hendricks {
 
 			this.pluginManager.init(this);
 		});
+
+		this.events.once('plugins:init', () => {
+			this.logger.info(
+				`🧩 ${this.pluginManager.plugins.length} Plugins initialized`
+			);
+		});
 	}
 
 	deployCommands({ target }: { target: 'GUILD' | 'GLOBAL' }) {
@@ -111,10 +117,6 @@ export default class Hendricks {
 	start() {
 		// after plugins have loaded, start plugins
 		this.events.once('plugins:init', () => {
-			this.logger.info(
-				`🧩 ${this.pluginManager.plugins.length} Plugins initialized`
-			);
-
 			this.events.emit('plugins:start');
 		});
 
