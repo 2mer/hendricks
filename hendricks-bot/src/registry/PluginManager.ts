@@ -48,7 +48,7 @@ export default class PluginManager {
 
 			await entry.loaded;
 
-			return entry;
+			return entry.instance;
 		}
 
 		return undefined;
