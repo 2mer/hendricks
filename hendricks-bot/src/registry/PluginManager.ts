@@ -42,13 +42,15 @@ export default class PluginManager {
 		hendricks.events.emit('register:commands');
 	}
 
-	async getPlugin(pluginId: string) {
+	async getPlugin<T extends Plugin = Plugin>(
+		pluginId: string
+	): Promise<T | undefined> {
 		if (this.idToPlugin.has(pluginId)) {
 			const entry = this.idToPlugin.get(pluginId)!;
 
 			await entry.loaded;
 
-			return entry.instance;
+			return entry.instance as T;
 		}
 
 		return undefined;
